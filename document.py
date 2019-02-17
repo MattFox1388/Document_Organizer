@@ -1,5 +1,5 @@
 import datetime
-from abc import ABC, ABCMeta
+from abc import ABC, ABCMeta, abstractmethod
 from typing import Mapping
 
 import utc
@@ -13,19 +13,21 @@ class TDocument(type):
 class Document(ABC):
     __metaclass = TDocument
 
+    @abstractmethod
     def get_hash(self) -> int:
         """
         Returns the hash code of this document.
         :return: Documents hash
         """
-        return self._hash
+        pass
 
+    @abstractmethod
     def get_keywords(self) -> Mapping[str,int]:
         """
         Returns a map of all the keywords in this document and their occurrences.
         :return: Map of keywords to occurrences
         """
-        return self._keywords
+        pass
 
     def get_occurrences(self, keyword: str) -> int:
         """
@@ -46,19 +48,21 @@ class Document(ABC):
         """
         return self.get_occurrences(keyword) > 0
 
+    @abstractmethod
     def get_parse_date(self) -> datetime:
         """
         Returns the time when this document was parsed last.
         :return: Last parse time
         """
-        return self._parse_date
+        pass
 
+    @abstractmethod
     def get_file_path(self) -> str:
         """
         Returns the path of the file for this document.
         :return: path of this document
         """
-        return self._file_path
+        pass
 
     def is_same(self, doc) -> bool:
         """
@@ -76,9 +80,23 @@ class Document(ABC):
                 and self.get_file_path() == other.get_file_path()
         return False
 
+
+class SimpleDocument(Document):
+
+    def get_hash(self):
+        return self._hash
+
+    def get_keywords(self):
+        return self._keywords
+
+    def get_parse_date(self):
+        return self._parse_date
+
+    def get_file_path(self):
+        return self._file_path
+
     def __init__(self, hash_val: int, keywords: Mapping[str,int], file_path: str, parse_date: datetime = utc.now()):
         self._hash = hash_val
         self._keywords = keywords
         self._file_path = file_path
         self._parse_date = parse_date
-
