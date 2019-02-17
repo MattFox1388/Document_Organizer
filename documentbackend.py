@@ -1,17 +1,26 @@
 from abc import ABC, abstractmethod
-from typing import List, Collection, Mapping
+from typing import Collection, Mapping
 
-from document import TDocument, Document
+from document import Document
 
 
 class TDocumentBackend(type):
     pass
 
 
-class DocumentBackend(ABC, TDocumentBackend):
+class DocumentBackend(ABC):
+    __metaclass__ = TDocumentBackend
 
     @abstractmethod
-    def store(self, docs: Collection[TDocument]) -> bool:
+    def close(self):
+        """
+        Frees all hardware resources that this backend uses.
+        :return: None
+        """
+        pass
+
+    @abstractmethod
+    def store(self, docs: Collection[Document]) -> bool:
         """
         Stores multiple documents into this backend that can be retrieved later.
         :param docs: A collection of documents that will be stored.
@@ -20,7 +29,7 @@ class DocumentBackend(ABC, TDocumentBackend):
         pass
 
     @abstractmethod
-    def get(self, keyword: str) -> Collection[TDocument]:
+    def get(self, keyword: str) -> Collection[Document]:
         """
         Returns any documents that contain the given keyword.
         :param keyword: The keyword in question
@@ -29,7 +38,7 @@ class DocumentBackend(ABC, TDocumentBackend):
         pass
 
     @abstractmethod
-    def get_duplicates(self) -> Mapping[int,Collection[TDocument]]:
+    def get_duplicates(self) -> Mapping[int,Collection[Document]]:
         """
         Returns all duplicates that are in this backend.
         The returned map has document hash codes as keys and Collection of all documents with that hash code as values.
@@ -37,7 +46,7 @@ class DocumentBackend(ABC, TDocumentBackend):
         """
         pass
 
-    def get_duplicates_of(self, doc: TDocument) -> Collection[TDocument]:
+    def get_duplicates_of(self, doc: Document) -> Collection[Document]:
         """
         Returns all duplicates of the given document.
         It is HIGHLY recommended to override this method for each backend since default implementation gathers all
@@ -51,3 +60,7 @@ class DocumentBackend(ABC, TDocumentBackend):
         if hash in dupes:
             return dupes[hash]
         return []
+
+    @abstractmethod
+    def remove(self, doc: Document) -> bool:
+        pass

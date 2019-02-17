@@ -1,13 +1,17 @@
 import datetime
-from abc import ABC
+from abc import ABC, ABCMeta
 from typing import Mapping
+
+import utc
 
 
 class TDocument(type):
+    __metaclass__ = ABCMeta
     pass
 
 
-class Document(ABC, TDocument):
+class Document(ABC):
+    __metaclass = TDocument
 
     def get_hash(self) -> int:
         """
@@ -56,7 +60,7 @@ class Document(ABC, TDocument):
         """
         return self._file_path
 
-    def is_same(self, doc: TDocument) -> bool:
+    def is_same(self, doc) -> bool:
         """
         Returns True whether the given document is a duplicate of this one.
         :param doc: other document to compare
@@ -64,8 +68,17 @@ class Document(ABC, TDocument):
         """
         return self.get_hash() == doc.get_hash()
 
-    def __init__(self, hash: int, keywords: Mapping[str,int],parse_date: datetime, file_path: str):
-        self._hash = hash
+    def __eq__(self, other):
+        if isinstance(other, Document):
+            return self.get_hash() == other.get_hash() \
+                and self.get_keywords() == other.get_keywords() \
+                and self.get_Parse_Date() == other.get_Parse_Date() \
+                and self.get_file_path() == other.get_file_path()
+        return False
+
+    def __init__(self, hash_val: int, keywords: Mapping[str,int], file_path: str, parse_date: datetime = utc.now()):
+        self._hash = hash_val
         self._keywords = keywords
-        self._parse_date = parse_date
         self._file_path = file_path
+        self._parse_date = parse_date
+
