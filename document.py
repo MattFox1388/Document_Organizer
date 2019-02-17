@@ -72,7 +72,7 @@ class Document(ABC):
         if isinstance(other, Document):
             return self.get_hash() == other.get_hash() \
                 and self.get_keywords() == other.get_keywords() \
-                and self.get_Parse_Date() == other.get_Parse_Date() \
+                and self.get_parse_date() == other.get_parse_date() \
                 and self.get_file_path() == other.get_file_path()
         return False
 
