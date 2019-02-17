@@ -42,7 +42,7 @@ class Document(ABC, TDocument):
         """
         return self.get_occurrences(keyword) > 0
 
-    def get_Parse_Date(self) -> datetime:
+    def get_parse_date(self) -> datetime:
         """
         Returns the time when this document was parsed last.
         :return: Last parse time
