@@ -1,4 +1,4 @@
-from document import TDocument
+from document import Document
 from documentbackend import DocumentBackend
 import psycopg2 # PostgreSQL database adapter -  pip install psycopg2
 from typing import Collection, Mapping
@@ -26,17 +26,17 @@ class PostgresBackend(DocumentBackend):
 		self.conn.close()
 
 	# TODO: Implement
-	def store(self, docs: Collection[TDocument]) -> bool:
+	def store(self, docs: Collection[Document]) -> bool:
 		pass
 
 	# TODO: Implement
-	def get(self, keyword: str) -> Collection[TDocument]:
+	def get(self, keyword: str) -> Collection[Document]:
 		pass
 
 	# TODO: Implement
-	def get_duplicates(self) -> Mapping[int, Collection[TDocument]]:
+	def get_duplicates(self) -> Mapping[int, Collection[Document]]:
 		pass
 
 	# TODO: Implement
-	def get_duplicates_of(self, doc: TDocument) -> Collection[TDocument]:
+	def get_duplicates_of(self, doc: Document) -> Collection[Document]:
 		pass
