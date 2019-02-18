@@ -1,8 +1,8 @@
 import unittest
 
-from document import SimpleDocument
-from documentbackend import DocumentBackend
-from documentparser import DocumentParser
+from Documents.document import Document
+from Documents.documentbackend import DocumentBackend
+from Documents.documentparser import DocumentParser
 
 
 class TestBaseAPI(unittest.TestCase):
@@ -24,7 +24,7 @@ class TestBaseAPI(unittest.TestCase):
         expected_keywords = {}
         path = ''
         expected_hash = 123
-        expected_doc = SimpleDocument(expected_hash, expected_keywords, path)
+        expected_doc = Document(expected_hash, expected_keywords, path)
 
         parser = self._getParser()
         self.assertIsNotNone(parser, 'Parser is None!')
@@ -41,7 +41,7 @@ class TestBaseAPI(unittest.TestCase):
         keywords = (key,25)
         back = self._getBackend()
         self.assertIsNotNone(back, 'Backend is None!')
-        doc = SimpleDocument(0, keywords, '')
+        doc = Document(0, keywords, '')
         back.store([doc])
 
         docs = back.get(keywords)

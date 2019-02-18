@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from document import Document
+from Documents.document import Document
 
 
 class TDocumentParser(type):

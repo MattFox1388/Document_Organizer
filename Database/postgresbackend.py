@@ -1,5 +1,5 @@
-from document import Document
-from documentbackend import DocumentBackend
+from Documents.document import Document
+from Documents.documentbackend import DocumentBackend
 import psycopg2 # PostgreSQL database adapter -  pip install psycopg2
 from typing import Collection, Mapping
 
