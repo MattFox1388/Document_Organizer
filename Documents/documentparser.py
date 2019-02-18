@@ -8,7 +8,16 @@ class TDocumentParser(type):
 
 
 class DocumentParser(ABC):
-    __metaclass = TDocumentParser
+    __metaclass__ = TDocumentParser
+
+    @abstractmethod
+    def can_parse(self, file_path: str) -> bool:
+        """
+        Returns True if this parser can parse the given file.
+        :param file_path: the path of the file
+        :return: True if this parser can parse the file
+        """
+        pass
 
     @abstractmethod
     def parse(self, file_path: str) -> Document:

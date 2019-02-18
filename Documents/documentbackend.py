@@ -38,6 +38,16 @@ class DocumentBackend(ABC):
         pass
 
     @abstractmethod
+    def get_by_path(self, path: str) -> Document:
+        """
+        Returns the document associated with a specific file path.
+        If there is no Document already stored for that path this will return None.
+        :param path: the path of the document
+        :return: Document for the path
+        """
+        pass
+
+    @abstractmethod
     def get_duplicates(self) -> Mapping[int,Collection[Document]]:
         """
         Returns all duplicates that are in this backend.

@@ -11,7 +11,7 @@ class TDocument(type):
 
 
 class Document(ABC):
-    __metaclass = TDocument
+    __metaclass__ = TDocument
 
     @abstractmethod
     def get_hash(self) -> int:
