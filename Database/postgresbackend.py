@@ -1,29 +1,22 @@
 from Documents.document import Document
 from Documents.documentbackend import DocumentBackend
-import psycopg2 # PostgreSQL database adapter -  pip install psycopg2
 from typing import Collection, Mapping
-
+from sqlalchemy import create_engine, Column, String, TIMESTAMP, Integer
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 class PostgresBackend(DocumentBackend):
-	# psycopg2 database session
-	conn = False
-	# psycopg2 cursor - Used for making SQL queries
-	cr = False
+	db = False
 
-	def __new__(mcs, host: str, dbname: str, user: str, password: str, port: str):
-		return super(PostgresBackend, mcs).__new__(mcs)
+	def __new__(cls, host: str, dbname: str, user: str, password: str, port: str):
+		return super(PostgresBackend, cls).__new__(cls)
 
-	def __init__(cls, host: str, dbname: str, user: str, password: str, port: str):
+	def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
 		# Open connection
-		cls.conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password, port=port)
-		cls.cr = cls.conn.cursor()
-
-		super(PostgresBackend, cls).__init__()
-
-	def __del__(self):
-		# Close connection
-		self.cr.close()
-		self.conn.close()
+		database = "postgresql+psycopg2://%s:%s@%s:%s/%s"%(
+			user, password, host, port, dbname)
+		self.db = create_engine(database)
+		super(PostgresBackend, self).__init__()
 
 	# TODO: Implement
 	def store(self, docs: Collection[Document]) -> bool:
@@ -40,3 +33,35 @@ class PostgresBackend(DocumentBackend):
 	# TODO: Implement
 	def get_duplicates_of(self, doc: Document) -> Collection[Document]:
 		pass
+
+
+# TODO: Move these classes to their own files
+base = declarative_base()
+
+
+class DBDocument(base):
+	__tablename__ = 'document'
+
+	file_id = Column(Integer, primary_key=True)
+	path = Column(String)
+	name = Column(String)
+	ext = Column(String)
+	hash = Column(Integer)
+	date_parse = Column(TIMESTAMP)
+	date_create = Column(TIMESTAMP)
+	date_edit = Column(TIMESTAMP)
+
+
+class DBKeyword(base):
+	__tablename__ = 'keyword'
+
+	keyword_id = Column(Integer, primary_key=True)
+	keyword = Column(String)
+
+
+class DBKeywordInstance(base):
+	_tablename = 'keyword_instance'
+
+	keyword_id = Column(Integer, primary_key=True)
+	file_id = Column(Integer, primary_key=True)
+
