@@ -38,7 +38,26 @@ class PostgresBackend(DocumentBackend):
 		:param docs: A collection of documents that will be stored.
 		:return: True if documents were stored successfully, False otherwise.
 		"""
-		pass
+		session = self.session()
+		try:
+			for doc in docs:
+				newdoc = DBDocument(path=doc.get_file_path())
+				for keyword in doc.get_keywords():
+					kw = session.query(DBKeyword).filter(DBKeyword.keyword == keyword[0]).all()
+					if len(kw) == 0:
+						kw = DBKeyword(keyword[0])
+						session.add(kw)
+					else:
+						kw = kw[0]
+					session.add(DBKeywordInstance(file_id=newdoc,
+												keyword_id=kw,
+												count=keyword[1]))
+				session.add()
+		except:
+			session.rollback()
+			return False
+		session.commit()
+		return True
 
 	def get(self, keyword: str) -> Collection[Document]:
 		"""
@@ -52,7 +71,6 @@ class PostgresBackend(DocumentBackend):
 			.filter(DBDocument.instance.keyword.in_(keyword)).all()
 		return documents
 
-	# TODO: Implement
 	def get_by_path(self, path: str) -> Document:
 		"""
 		Returns the document associated with a specific file path.
@@ -60,6 +78,11 @@ class PostgresBackend(DocumentBackend):
 		:param path: the path of the document
 		:return: Document for the path
 		"""
+		session = self.session()
+
+		documents = session.query(DBDocument)\
+			.filter(DBDocument.path == path).all()
+		return documents
 		pass
 
 	# TODO: Implement
@@ -71,7 +94,6 @@ class PostgresBackend(DocumentBackend):
 		"""
 		pass
 
-	# TODO: Implement
 	def get_duplicates_of(self, doc: Document) -> Collection[Document]:
 		"""
 		Returns all duplicates of the given document.
@@ -81,4 +103,9 @@ class PostgresBackend(DocumentBackend):
 		:param doc: Document to find duplicates of
 		:return: Collection of documents
 		"""
-		pass
+		session = self.session()
+
+		documents = session.query(DBDocument)\
+			.filter(DBDocument.hash == doc.get_hash())\
+			.filter(DBDocument.path != doc.get_file_path())
+		return documents
