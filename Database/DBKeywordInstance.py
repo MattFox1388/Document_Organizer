@@ -1,3 +1,4 @@
+from Database import DBDocument
 from .DBKeyword import DBKeyword
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -14,8 +15,14 @@ class DBKeywordInstance(base):
 	count = Column(Integer)
 	keyword = relationship(DBKeyword)
 
+	def get_document(self) -> DBDocument:
+		return self.document
+
 	def get_word(self) -> str:
-		return self.keyword.keyword
+		return self.keyword.get_name()
 
 	def get_count(self) -> int:
 		return self.count
+
+	def set_count(self, new_count: int):
+		count = new_count
