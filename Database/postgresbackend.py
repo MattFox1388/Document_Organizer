@@ -4,13 +4,13 @@ from .DBDocument import DBDocument
 from Documents.document import Document
 from Documents.documentbackend import DocumentBackend
 from typing import Collection, Mapping
-from sqlalchemy import create_engine, Column, String, TIMESTAMP, Integer, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 class PostgresBackend(DocumentBackend):
 	db = False
+	session = False
 
 	def __new__(cls, host: str, dbname: str, user: str, password: str, port: str):
 		return super(PostgresBackend, cls).__new__(cls)
@@ -20,6 +20,7 @@ class PostgresBackend(DocumentBackend):
 		database = "postgresql+psycopg2://%s:%s@%s:%s/%s"%(
 			user, password, host, port, dbname)
 		self.db = create_engine(database)
+		self.session = sessionmaker(self.db)
 		super(PostgresBackend, self).__init__()
 
 	def close(self):
@@ -39,22 +40,20 @@ class PostgresBackend(DocumentBackend):
 		"""
 		pass
 
-	# TODO: Implement
 	def get(self, keyword: str) -> Collection[Document]:
 		"""
 		Returns any documents that contain the given keyword.
 		:param keyword: The keyword in question
 		:return: Collection of documents
 		"""
-		session = sessionmaker(self.db)
+		session = self.session()
 
 		document_query = session.query(DBDocument)\
-			.filter(DBDocument.keywords.in_(keyword)).all()
-
+			.filter(DBDocument.instance.keyword.in_(keyword)).all()
 
 		documents = []
 		for document in document_query:
-			pass
+			documents.append(document)
 		return documents
 
 	# TODO: Implement
