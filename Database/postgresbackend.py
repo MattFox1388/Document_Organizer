@@ -1,7 +1,7 @@
 from Documents.document import Document
 from Documents.documentbackend import DocumentBackend
 from typing import Collection, Mapping
-from sqlalchemy import create_engine, Column, String, TIMESTAMP, Integer
+from sqlalchemy import create_engine, Column, String, TIMESTAMP, Integer, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -46,8 +46,7 @@ class PostgresBackend(DocumentBackend):
 		session = sessionmaker(self.db)
 
 		document_query = session.query(DBDocument)\
-			.join(DBKeywordInstance).join(DBKeyword)\
-			.filter(DBKeyword.keyword == keyword)
+			.filter(DBDocument.keywords.in_(keyword)).all()
 
 
 		documents = []
@@ -91,6 +90,16 @@ class PostgresBackend(DocumentBackend):
 base = declarative_base()
 
 
+
+
+
+class DBKeyword(base):
+	__tablename__ = 'keyword'
+
+	keyword_id = Column(Integer, primary_key=True)
+	keyword = Column(String)
+
+
 class DBDocument(base):
 	__tablename__ = 'document'
 
@@ -102,20 +111,13 @@ class DBDocument(base):
 	date_parse = Column(TIMESTAMP)
 	date_create = Column(TIMESTAMP)
 	date_edit = Column(TIMESTAMP)
-
-
-class DBKeyword(base):
-	__tablename__ = 'keyword'
-
-	keyword_id = Column(Integer, primary_key=True)
-	keyword = Column(String)
+	keywords = relationship(DBKeyword, backref='document')
 
 
 class DBKeywordInstance(base):
 	_tablename = 'keyword_instance'
 
-	keyword_id = Column(Integer, primary_key=True)
-	keyword = relationship(DBKeyword, backref='keyword_id')
-	file_id = Column(Integer, primary_key=True)
-	file = relationship(DBDocument, backref='file_id')
+	keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True)
+	file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
+
 
