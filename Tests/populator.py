@@ -34,5 +34,4 @@ def need_to_parse(doc: Document, mod_time: datetime, stored: Document) -> bool:
     return stored is None or mod_time > stored.get_parse_date()
 
 
-
 populate(None, None, '')

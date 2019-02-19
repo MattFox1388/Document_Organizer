@@ -8,3 +8,6 @@ class DBKeyword(base):
 
 	keyword_id = Column(Integer, primary_key=True)
 	keyword = Column(String)
+
+	def get_name(self) -> str:
+		return self.keyword

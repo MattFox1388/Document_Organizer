@@ -1,5 +1,8 @@
+import datetime
+from collections import Mapping
+
+from Database import DBKeywordInstance
 from Documents.document import Document
-from .DBKeyword import DBKeyword
 from sqlalchemy import Column, String, TIMESTAMP, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -18,23 +21,30 @@ class DBDocument(base, Document):
 	date_parse = Column(TIMESTAMP)
 	date_create = Column(TIMESTAMP)
 	date_edit = Column(TIMESTAMP)
-	instance = relationship(DBKeyword, backref='instance')
+	keywords = relationship(DBKeywordInstance, backref='document')
 
+	keyword_map = {}
 
-def get_hash(self):
-	return self.hash
+	def __init__(self):
+		for keyword in self.keywords:
+			self.keyword_map[keyword.get_word()]
 
+	def get_hash(self) -> int:
+		return self.hash
 
-def get_keywords(self):
-	keywords = []
-	for i in self.instance:
-		keywords.append((i.keyword.keyword, i.count))
-	return
+	def get_keywords(self) -> Mapping[str, int]:
+		return self.keyword_map
 
+	def get_occurrences(self, keyword: str) -> int:
+		if keyword in self.get_keywords():
+			return self.get_keywords()[keyword]
+		return 0
 
-def get_parse_date(self):
-	return self.date_parse
+	def occurs(self, keyword: str):
+		return self.get_occurrences(keyword) > 0
 
+	def get_parse_date(self) -> datetime:
+		return self.date_parse
 
-def get_file_path(self):
-	return self.path
+	def get_file_path(self) -> str:
+		return self.path

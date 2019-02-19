@@ -14,3 +14,8 @@ class DBKeywordInstance(base):
 	count = Column(Integer)
 	keyword = relationship(DBKeyword)
 
+	def get_word(self) -> str:
+		return self.keyword.keyword
+
+	def get_count(self) -> int:
+		return self.count
