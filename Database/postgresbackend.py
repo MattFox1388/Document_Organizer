@@ -1,3 +1,6 @@
+from .DBKeywordInstance import DBKeywordInstance
+from .DBKeyword import DBKeyword
+from .DBDocument import DBDocument
 from Documents.document import Document
 from Documents.documentbackend import DocumentBackend
 from typing import Collection, Mapping
@@ -51,7 +54,7 @@ class PostgresBackend(DocumentBackend):
 
 		documents = []
 		for document in document_query:
-
+			pass
 		return documents
 
 	# TODO: Implement
@@ -84,40 +87,3 @@ class PostgresBackend(DocumentBackend):
 		:return: Collection of documents
 		"""
 		pass
-
-
-# TODO: Move these classes to their own files
-base = declarative_base()
-
-
-
-
-
-class DBKeyword(base):
-	__tablename__ = 'keyword'
-
-	keyword_id = Column(Integer, primary_key=True)
-	keyword = Column(String)
-
-
-class DBDocument(base):
-	__tablename__ = 'document'
-
-	file_id = Column(Integer, primary_key=True)
-	path = Column(String)
-	name = Column(String)
-	ext = Column(String)
-	hash = Column(Integer)
-	date_parse = Column(TIMESTAMP)
-	date_create = Column(TIMESTAMP)
-	date_edit = Column(TIMESTAMP)
-	keywords = relationship(DBKeyword, backref='document')
-
-
-class DBKeywordInstance(base):
-	_tablename = 'keyword_instance'
-
-	keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True)
-	file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
-
-
