@@ -48,12 +48,8 @@ class PostgresBackend(DocumentBackend):
 		"""
 		session = self.session()
 
-		document_query = session.query(DBDocument)\
+		documents = session.query(DBDocument)\
 			.filter(DBDocument.instance.keyword.in_(keyword)).all()
-
-		documents = []
-		for document in document_query:
-			documents.append(document)
 		return documents
 
 	# TODO: Implement
