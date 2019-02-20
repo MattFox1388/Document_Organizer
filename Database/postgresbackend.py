@@ -41,22 +41,21 @@ class PostgresBackend(DocumentBackend):
 		session = self.session()
 		try:
 			for doc in docs:
-				newdoc = DBDocument(path=doc.get_file_path())
+				# Check if all keywords are already in database.  If not, add them.
 				for keyword in doc.get_keywords():
-					kw = session.query(DBKeyword).filter(DBKeyword.keyword == keyword[0]).all()
-					if len(kw) == 0:
-						kw = DBKeyword(keyword[0])
-						session.add(kw)
+					kw = DBKeyword(keyword[0])
+					instance = session.query(DBKeyword).filter(DBKeyword.keyword == kw.keyword).first()
+					if instance:
+						kw = instance
+						print("Keyword %s already exists" % kw.keyword)
 					else:
-						kw = kw[0]
-					session.add(DBKeywordInstance(file_id=newdoc,
-												keyword_id=kw,
-												count=keyword[1]))
-				session.add()
+						session.add(kw)
+				# Todo: Add document to database
+
+			session.commit()
 		except:
 			session.rollback()
 			return False
-		session.commit()
 		return True
 
 	def get(self, keyword: str) -> Collection[Document]:

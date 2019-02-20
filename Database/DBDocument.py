@@ -1,24 +1,29 @@
+from Documents.document import TDocument, Document
+from Database import DBKeywordInstance
+
 import datetime
 from collections import Mapping
 
-import frozendict as frozendict
+from frozendict import frozendict
 
-from Database import DBKeywordInstance
-from Documents.document import Document
 from sqlalchemy import Column, String, TIMESTAMP, Integer
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative.api import DeclarativeMeta
 from sqlalchemy.orm import relationship
+
 
 base = declarative_base()
 
 
-class DBDocument(base, Document):
+class TDBDocument(TDocument, DeclarativeMeta):
+	pass
+
+
+class DBDocument(Document, base, metaclass=TDBDocument):
 	__tablename__ = 'document'
 
 	file_id = Column(Integer, primary_key=True)
 	path = Column(String)
-	name = Column(String)
-	ext = Column(String)
 	hash = Column(Integer)
 	date_parse = Column(TIMESTAMP)
 	date_create = Column(TIMESTAMP)
@@ -28,10 +33,11 @@ class DBDocument(base, Document):
 	keyword_map = {}
 	safe_keyword_map = None
 
-	def __init__(self):
+	def __init__(self, *args, **kwargs):
 		for keyword in self.keywords:
-			self.keyword_map[keyword.get_word()]
+			self.keyword_map.update({keyword.get_word():keyword.get_count()})
 		self.safe_keyword_map = frozendict(self.keyword_map)
+		super(base, self).__init__(self, *args, **kwargs)
 
 	def get_hash(self) -> int:
 		return self.hash

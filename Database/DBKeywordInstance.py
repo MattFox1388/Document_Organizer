@@ -8,7 +8,7 @@ base = declarative_base()
 
 
 class DBKeywordInstance(base):
-	_tablename = 'keyword_instance'
+	__tablename__ = 'keyword_instance'
 
 	keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True)
 	file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
