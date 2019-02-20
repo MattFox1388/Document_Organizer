@@ -19,7 +19,8 @@ class TDBDocument(TDocument, DeclarativeMeta):
 	pass
 
 
-class DBDocument(Document, base, metaclass=TDBDocument):
+class DBDocument(Document, base):
+	__metaclass__ = TDBDocument
 	__tablename__ = 'document'
 
 	file_id = Column(Integer, primary_key=True)

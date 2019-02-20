@@ -1,3 +1,4 @@
+import hashlib
 import os
 from abc import ABC, abstractmethod
 from collections import Collection
@@ -37,6 +38,13 @@ class DocumentParser(ABC):
         """
         pass
 
-    def compute_hash(self, file_path: str) -> int:
-        f = open(file_path, 'r')
-        hash = 31
+    @classmethod
+    def compute_hash(cls, file_path: str, buffer_size: int = 65536) -> str:
+        sha1 = hashlib.sha1()
+        with open(file_path, 'rb') as f:
+            while True:
+                data = f.read(buffer_size)
+                if not data:
+                    break
+                sha1.update(data)
+        return sha1.hexdigest()
