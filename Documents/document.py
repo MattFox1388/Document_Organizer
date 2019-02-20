@@ -5,14 +5,11 @@ from typing import Mapping
 import utc
 
 
-class TDocument(type):
-    __metaclass__ = ABCMeta
+class TDocument(ABCMeta):
     pass
 
 
-class Document(ABC):
-    __metaclass__ = TDocument
-
+class Document(ABC, metaclass=TDocument):
     @abstractmethod
     def get_hash(self) -> int:
         """
