@@ -45,9 +45,11 @@ class VideoParser(DocumentParser):
         keyword_dict = dict()
         for item in text_wo_tokens:
             if len(item) > 2:
-                pass
-
-        # TODO: fill keyword_dict
+                # searching dict for keyword and updating
+                if item in keyword_dict:
+                    keyword_dict[item] += 1
+                else:
+                    keyword_dict[item] = 1
 
         return SimpleDocument(hash_val=video_hash, keywords=keyword_dict, file_path=file_path, parse_date=utc.now())
 
