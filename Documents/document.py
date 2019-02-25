@@ -11,7 +11,7 @@ class TDocument(ABCMeta):
 
 class Document(ABC, metaclass=TDocument):
     @abstractmethod
-    def get_hash(self) -> int:
+    def get_hash(self) -> str:
         """
         Returns the hash code of this document.
         :return: Documents hash
@@ -54,6 +54,22 @@ class Document(ABC, metaclass=TDocument):
         pass
 
     @abstractmethod
+    def get_create_date(self) -> datetime:
+        """
+        Returns the time when this document was created.
+        :return: Last parse time
+        """
+        pass
+
+    @abstractmethod
+    def get_edit_date(self) -> datetime:
+        """
+        Returns the time when this document was edited last.
+        :return: Last parse time
+        """
+        pass
+
+    @abstractmethod
     def get_file_path(self) -> str:
         """
         Returns the path of the file for this document.
@@ -74,7 +90,9 @@ class Document(ABC, metaclass=TDocument):
             return self.get_hash() == other.get_hash() \
                 and self.get_keywords() == other.get_keywords() \
                 and self.get_parse_date() == other.get_parse_date() \
-                and self.get_file_path() == other.get_file_path()
+                and self.get_file_path() == other.get_file_path() \
+                and self.get_create_date() == other.get_create_date() \
+                and self.get_edit_date() == other.get_edit_date()
         return False
 
 
@@ -89,14 +107,22 @@ class SimpleDocument(Document):
     def get_parse_date(self):
         return self._parse_date
 
+    def get_create_date(self):
+        return self._create_date
+
+    def get_edit_date(self):
+        return self._edit_date
+
     def get_file_path(self):
         return self._file_path
 
-    def __init__(self, hash_val: int, keywords: Mapping[str,int], file_path: str, parse_date: datetime = utc.now()):
+    def __init__(self, hash_val: str, keywords: Mapping[str,int], file_path: str, create_date: datetime, edit_date: datetime, parse_date: datetime = utc.now()):
         self._hash = hash_val
         self._keywords = keywords
         self._file_path = file_path
         self._parse_date = parse_date
+        self._create_date = create_date
+        self._edit_date = edit_date
 
     def __repr__(self):
         print('The hash value is: ' + self._hash)
