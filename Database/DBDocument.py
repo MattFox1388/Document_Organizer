@@ -1,18 +1,15 @@
 from typing import Dict
 
+from Database.DBBase import base
 from Documents.document import TDocument, Document
-from Database import DBKeywordInstance
 
 import datetime
 
 from frozendict import frozendict
 
 from sqlalchemy import Column, String, TIMESTAMP, Integer
-from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
+from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.orm import relationship
-
-
-base = declarative_base()
 
 
 class TDBDocument(TDocument, DeclarativeMeta):
@@ -24,11 +21,11 @@ class DBDocument(Document, base, metaclass=TDBDocument):
 
     file_id = Column(Integer, primary_key=True)
     path = Column(String)
-    hash = Column(Integer)
+    hash = Column(String)
     date_parse = Column(TIMESTAMP)
     date_create = Column(TIMESTAMP)
     date_edit = Column(TIMESTAMP)
-    keywords = relationship(DBKeywordInstance, backref='document')
+    keywords = relationship("DBKeywordInstance", backref='document')
 
     keyword_map = {}
     safe_keyword_map = None
@@ -37,21 +34,27 @@ class DBDocument(Document, base, metaclass=TDBDocument):
         for keyword in self.keywords:
             self.keyword_map.update({keyword.get_word():keyword.get_count()})
         self.safe_keyword_map = frozendict(self.keyword_map)
-        super(base, self).__init__(self, *args, **kwargs)
+        base.__init__(self, *args, **kwargs)
 
-    def get_hash(self) -> int:
+    def get_hash(self) -> str:
         return self.hash
 
     def get_keywords(self) -> Dict[str, int]:
-        return self.safe_keyword_map
+        return dict(self.safe_keyword_map)
 
     def get_parse_date(self) -> datetime:
         return self.date_parse
 
+    def get_create_date(self) -> datetime:
+        return self.date_create
+
+    def get_edit_date(self) -> datetime:
+        return self.date_edit
+
     def get_file_path(self) -> str:
         return self.path
 
-    def _get_db_keyword(self, word: str) -> DBKeywordInstance:
+    def _get_db_keyword(self, word: str):
         for keyword in self.keywords:
             if keyword.get_word() == word:
                 return keyword

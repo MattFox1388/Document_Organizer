@@ -1,21 +1,19 @@
+from Database.DBBase import base
 from Database import DBDocument
-from .DBKeyword import DBKeyword
+from Database.DBKeyword import DBKeyword
 from sqlalchemy import Column, Integer, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
-base = declarative_base()
 
 
 class DBKeywordInstance(base):
 	__tablename__ = 'keyword_instance'
 
 	keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True)
+	keyword = relationship(DBKeyword)
 	file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
 	count = Column(Integer)
-	keyword = relationship(DBKeyword)
 
-	def get_document(self) -> DBDocument:
+	def get_document(self):
 		return self.document
 
 	def get_word(self) -> str:
