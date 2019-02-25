@@ -97,3 +97,10 @@ class SimpleDocument(Document):
         self._keywords = keywords
         self._file_path = file_path
         self._parse_date = parse_date
+
+    def __repr__(self):
+        print('The hash value is: ' + self._hash)
+        print('The file path is: ' + self._file_path)
+        print('the parse date is:' + self._parse_date)
+        for key, value in self._keywords.items():
+            print('The word ' + key + ' has ' + value + ' occurrences.')
