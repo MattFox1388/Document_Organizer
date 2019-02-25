@@ -25,7 +25,7 @@ class DBDocument(Document, base, metaclass=TDBDocument):
     date_parse = Column(TIMESTAMP)
     date_create = Column(TIMESTAMP)
     date_edit = Column(TIMESTAMP)
-    keywords = relationship("DBKeywordInstance", backref='document')
+    keywords = relationship("DBKeywordInstance", backref='document', cascade="all, delete-orphan")
 
     keyword_map = {}
     safe_keyword_map = None
