@@ -1,20 +1,21 @@
+from typing import Collection
+
 from Documents.documentparser import DocumentParser
 from .document import Document, SimpleDocument
 import os
 import utc
 import speech_recognition as sr
-from collections import Collection
 import moviepy.editor as mp
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-VIDEO_EXTS = ['.flv', '.avi', '.wmv', '.mov', '.mp4']
+VIDEO_EXTS = {'.flv', '.avi', '.wmv', '.mov', '.mp4'}
 
 
 class VideoParser(DocumentParser):
 
     def can_parse(self, file_path: str) -> bool:
-        ext = os.path.splitext(file_path)[1]
+        ext = os.path.splitext(file_path)[1].lower()
         # only supporting commonly known video extensions
         # I'll add if needed based on initial testing
         if ext in VIDEO_EXTS:

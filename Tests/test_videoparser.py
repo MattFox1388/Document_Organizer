@@ -1,9 +1,10 @@
 import sys
 import unittest
+from typing import Collection
+
 sys.path.append("..")
 
 from Documents.videoparser import VideoParser
-from collections import Collection
 
 
 class TestVideoParser(unittest.TestCase):
@@ -20,7 +21,9 @@ class TestVideoParser(unittest.TestCase):
 
     def test_getcompatible(self):
         list_compatible_exts = self.parser.get_compatible_extensions()
-        self.assertIsInstance(list_compatible_exts, Collection[str])
+        self.assertIsInstance(list_compatible_exts, Collection)
+        for element in list_compatible_exts:
+            self.assertIsInstance(element, str)
         print(list_compatible_exts)
 
     ''' This test will take a while due to the fact that the parser

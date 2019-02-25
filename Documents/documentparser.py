@@ -1,7 +1,7 @@
 import hashlib
 import os
 from abc import ABC, abstractmethod
-from collections import Collection
+from typing import Collection
 
 from Documents.document import Document
 
