@@ -135,7 +135,7 @@ class SABackend(DocumentBackend):
     def remove(self, doc: Document) -> bool:
         session = self.session()
         try:
-            doc_instance = session.query(DBDocument).filter(DBDocument.get_file_path() == doc.get_file_path()).first()
+            doc_instance = session.query(SADocument).filter(SADocument.get_file_path() == doc.get_file_path()).first()
             session.delete(doc_instance)
             session.commit()
         except:
