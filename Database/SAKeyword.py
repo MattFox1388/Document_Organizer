@@ -1,8 +1,8 @@
 from sqlalchemy import Column, String, Integer
-from Database.DBBase import base
+from Database.SABase import base
 
 
-class DBKeyword(base):
+class SAKeyword(base):
 	__tablename__ = 'keyword'
 
 	keyword_id = Column(Integer, primary_key=True)

@@ -17,7 +17,7 @@ EXTENSIONS = {'.csv', '.doc', '.docx', '.eml', '.epub', '.gif', '.jpg', '.jpeg',
 splitter = re.compile(r'[\s{}]+'.format(re.escape(punctuation)))
 
 
-class FileParser(DocumentParser):
+class TextractParser(DocumentParser):
 
     def get_compatible_extensions(self) -> Collection[str]:
         return EXTENSIONS

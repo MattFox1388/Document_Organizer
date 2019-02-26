@@ -1,15 +1,15 @@
-from Database.DBBase import base
-from Database import DBDocument
-from Database.DBKeyword import DBKeyword
+from Database.SABase import base
+from Database import SADocument
+from Database.SAKeyword import SAKeyword
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
 
-class DBKeywordInstance(base):
+class SAKeywordInstance(base):
 	__tablename__ = 'keyword_instance'
 
 	keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True)
-	keyword = relationship(DBKeyword)
+	keyword = relationship(SAKeyword)
 	file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
 	count = Column(Integer)
 

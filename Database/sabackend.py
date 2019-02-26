@@ -1,6 +1,6 @@
-from .DBKeywordInstance import DBKeywordInstance
-from .DBKeyword import DBKeyword
-from .DBDocument import DBDocument
+from .SAKeywordInstance import SAKeywordInstance
+from .SAKeyword import SAKeyword
+from .SADocument import SADocument
 from Documents.document import Document
 from Documents.documentbackend import DocumentBackend
 from typing import Collection, Mapping
@@ -8,12 +8,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-class PostgresBackend(DocumentBackend):
+class SABackend(DocumentBackend):
     db = False
     session = False
 
     def __new__(cls, host: str, dbname: str, user: str, password: str, port: str):
-        return super(PostgresBackend, cls).__new__(cls)
+        return super(SABackend, cls).__new__(cls)
 
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
         # Open connection
@@ -41,8 +41,8 @@ class PostgresBackend(DocumentBackend):
             for document in docs:
                 # Check if all keywords are already in database.  If not, add them.
                 for keyword, count in document.get_keywords().items():
-                    kw = DBKeyword(keyword=keyword)
-                    instance = session.query(DBKeyword).filter(DBKeyword.keyword == kw.keyword).first()
+                    kw = SAKeyword(keyword=keyword)
+                    instance = session.query(SAKeyword).filter(SAKeyword.keyword == kw.keyword).first()
                     if instance:
                         kw = instance
                     else:
@@ -50,7 +50,7 @@ class PostgresBackend(DocumentBackend):
                 session.flush()
 
                 # Check to see if the document exists and if the hash matches
-                doc_instance = session.query(DBDocument).filter(DBDocument.path == document.get_file_path()).first()
+                doc_instance = session.query(SADocument).filter(SADocument.path == document.get_file_path()).first()
                 if doc_instance and doc_instance.hash == document.get_hash():
                     continue
                 else:
@@ -59,7 +59,7 @@ class PostgresBackend(DocumentBackend):
                         session.delete(doc_instance)
                         session.flush()
                     # Create the document and add it to the database
-                    newdoc = DBDocument(path=document.get_file_path(),
+                    newdoc = SADocument(path=document.get_file_path(),
                                         hash=document.get_hash(),
                                         date_create=document.get_create_date(),
                                         date_edit=document.get_edit_date(),
@@ -69,10 +69,10 @@ class PostgresBackend(DocumentBackend):
 
                     # Create a new keyword_instance for each keyword
                     document_kws = document.get_keywords()
-                    kws = session.query(DBKeyword).filter(DBKeyword.keyword.in_(document_kws.keys())).all()
+                    kws = session.query(SAKeyword).filter(SAKeyword.keyword.in_(document_kws.keys())).all()
                     kws = {kw: document_kws[kw.keyword] for kw in kws}
                     for kw, count in kws.items():
-                        kwi = DBKeywordInstance(keyword_id=kw.keyword_id, file_id=newdoc.file_id, count=count)
+                        kwi = SAKeywordInstance(keyword_id=kw.keyword_id, file_id=newdoc.file_id, count=count)
                         session.add(kwi)
                     session.flush()
             session.commit()
@@ -89,8 +89,8 @@ class PostgresBackend(DocumentBackend):
         """
         session = self.session()
 
-        documents = session.query(DBDocument)\
-            .filter(DBDocument.instance.keyword.in_(keyword)).all()
+        documents = session.query(SADocument)\
+            .filter(SADocument.instance.keyword.in_(keyword)).all()
         return documents
 
     def get_by_path(self, path: str) -> Document:
@@ -102,8 +102,8 @@ class PostgresBackend(DocumentBackend):
         """
         session = self.session()
 
-        documents = session.query(DBDocument)\
-            .filter(DBDocument.path == path).all()
+        documents = session.query(SADocument)\
+            .filter(SADocument.path == path).all()
         return documents
         pass
 
@@ -127,9 +127,9 @@ class PostgresBackend(DocumentBackend):
         """
         session = self.session()
 
-        documents = session.query(DBDocument)\
-            .filter(DBDocument.hash == doc.get_hash())\
-            .filter(DBDocument.path != doc.get_file_path())
+        documents = session.query(SADocument)\
+            .filter(SADocument.hash == doc.get_hash())\
+            .filter(SADocument.path != doc.get_file_path())
         return documents
 
     # TODO: Implement
