@@ -16,10 +16,10 @@ class VideoParser(DocumentParser):
 
     def parse(self, file_path: str) -> Document:
         # hash value
-        video_hash = int(self.compute_hash(file_path, 65536), 16)
+        video_hash = self.compute_hash(file_path, 65536)
 
         # converting video to audio
-        temp_audio_file = 'video_audio/audio.wav'
+        temp_audio_file = 'audio.wav'
         audio_clip = mp.VideoFileClip(file_path).subclip(0)
         audio_clip.audio.write_audiofile(temp_audio_file, nbytes=2)
 
@@ -29,6 +29,8 @@ class VideoParser(DocumentParser):
             audio = r.record(source)
             text = r.recognize_sphinx(audio)
 
+        # get rid of temporary audio file
+        os.remove('audio.wav')
         # filter stopwords
         stop_words = set(stopwords.words('english'))
         text_tokens = word_tokenize(text)
@@ -44,7 +46,10 @@ class VideoParser(DocumentParser):
                 else:
                     keyword_dict[item] = 1
 
-        return SimpleDocument(hash_val=video_hash, keywords=keyword_dict, file_path=file_path, parse_date=utc.now())
+        creat_date, mod_date = SimpleDocument.find_create_and_mod(file_path)
+
+        return SimpleDocument(hash_val=video_hash, keywords=keyword_dict, file_path=file_path, parse_date=utc.now(),
+                              create_date=creat_date, edit_date=mod_date)
 
     def get_compatible_extensions(self) -> Collection[str]:
         return VIDEO_EXTS
