@@ -27,7 +27,7 @@ class DocumentParser(ABC):
         :param file_path: the path of the file
         :return: True if this parser can parse the file
         """
-        return os.path.splitext(file_path) in self.get_compatible_extensions()
+        return os.path.splitext(file_path)[1].lower() in self.get_compatible_extensions()
 
     @abstractmethod
     def parse(self, file_path: str) -> Document:

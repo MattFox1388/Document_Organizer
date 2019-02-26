@@ -1,6 +1,6 @@
 from typing import Dict
 
-from Database.DBBase import base
+from Database.SABase import base
 from Documents.document import TDocument, Document
 
 import datetime
@@ -16,7 +16,7 @@ class TDBDocument(TDocument, DeclarativeMeta):
     pass
 
 
-class DBDocument(Document, base, metaclass=TDBDocument):
+class SADocument(Document, base, metaclass=TDBDocument):
     __tablename__ = 'document'
 
     file_id = Column(Integer, primary_key=True)

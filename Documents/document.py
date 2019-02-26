@@ -1,3 +1,4 @@
+import os
 import datetime
 from abc import ABC, ABCMeta, abstractmethod
 from typing import Mapping
@@ -116,6 +117,17 @@ class SimpleDocument(Document):
     def get_file_path(self):
         return self._file_path
 
+    '''This method uses ctime to find creation time (Windows), or last metadata change (Unix). 
+       Second datetime in tuple will be the last modified datetime'''
+
+    @staticmethod
+    def find_create_and_mod(file_path) -> (datetime, datetime):
+        # check whether windows, linux or mac
+        stat = os.stat(file_path)
+        create_date = datetime.datetime.fromtimestamp(stat.st_ctime)
+        mod_date = datetime.datetime.fromtimestamp(stat.st_mtime)
+        return create_date, mod_date
+
     def __init__(self, hash_val: str, keywords: Mapping[str,int], file_path: str, create_date: datetime, edit_date: datetime, parse_date: datetime = utc.now()):
         self._hash = hash_val
         self._keywords = keywords
@@ -127,6 +139,8 @@ class SimpleDocument(Document):
     def __repr__(self):
         print('The hash value is: ' + self._hash)
         print('The file path is: ' + self._file_path)
-        print('the parse date is:' + self._parse_date)
+        print('the parse date is:' + self._parse_date.strftime("%Y-%m-%d %H:%M:%S"))
+        print('Creation date: ' + self._create_date.strftime("%Y-%m-%d %H:%M:%S"))
+        print('Modification date: ' + self._edit_date.strftime("%Y-%m-%d %H:%M:%S"))
         for key, value in self._keywords.items():
-            print('The word ' + key + ' has ' + value + ' occurrences.')
+            print('The word ' + key + ' has ' + str(value) + ' occurrences.')
