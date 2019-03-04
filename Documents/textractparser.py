@@ -1,3 +1,4 @@
+
 from typing import Collection
 
 from Documents.documentparser import DocumentParser
@@ -14,7 +15,6 @@ from nltk.tokenize import word_tokenize
 EXTENSIONS = {'.csv', '.doc', '.docx', '.eml', '.epub', '.gif', '.jpg', '.jpeg', '.json', '.html', '.htm', '.mp3',
               '.msg', '.odt', '.ogg', '.pdf', '.png', '.pptx', '.ps', '.rtf', '.tiff', '.tif', '.txt', '.wav', 'xlsx',
               '.xls'}
-splitter = re.compile(r'[\s{}]+'.format(re.escape(punctuation)))
 
 
 class TextractParser(DocumentParser):
@@ -44,9 +44,15 @@ class TextractParser(DocumentParser):
             return None
         else:
             text = textract.process(file_path)
-            word_list = splitter.split(text)[:-1]
+            text = text.decode('utf-8')
+            word_list = word_tokenize(text)
+            word_list = [''.join(c for c in s if c not in punctuation) for s in word_list]
+            word_list = [s for s in word_list if s]
+            word_list = [e.lower() for e in word_list]
             stop = set(stopwords.words('english'))
             tokens = [w for w in word_list if not w in stop]
             word_map = dict(Counter(tokens))
             file_hash = int(self.compute_hash(file_path, 65536), 16)
-            return SimpleDocument(hash_val=file_hash, keywords=word_map, file_path=file_path, parse_date=utc.now())
+            create, edit = SimpleDocument.find_create_and_mod(file_path)
+            return SimpleDocument(hash_val=file_hash, keywords=word_map, file_path=file_path, parse_date=utc.now(),
+                                  create_date=create, edit_date=edit)
