@@ -1,3 +1,4 @@
+import math
 from abc import ABC, abstractmethod
 from typing import Collection, Mapping
 
@@ -10,6 +11,19 @@ class TDocumentBackend(type):
 
 class DocumentBackend(ABC):
     __metaclass__ = TDocumentBackend
+
+    @abstractmethod
+    def _get_total_document_count(self) -> int:
+        pass
+
+    def _get_inverse_document_frequncy(self, docs_with_term: Collection[Document]) -> float:
+        if not docs_with_term:
+            return 0
+        return math.log(self._get_total_document_count() / len(docs_with_term))
+
+    @staticmethod
+    def _get_relevance(doc: Document, term: str, idf: float) -> float:
+        return doc.get_term_frequency(term) * idf
 
     @abstractmethod
     def close(self):

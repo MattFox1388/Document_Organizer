@@ -11,6 +11,14 @@ class TDocument(ABCMeta):
 
 
 class Document(ABC, metaclass=TDocument):
+
+    @abstractmethod
+    def get_total_words(self) -> int:
+        pass
+
+    def get_term_frequency(self, term: str) -> float:
+        return self.get_occurrences(term) / self.get_total_words()
+
     @abstractmethod
     def get_hash(self) -> str:
         """

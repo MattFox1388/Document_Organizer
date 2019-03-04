@@ -9,8 +9,8 @@ from sqlalchemy.orm import sessionmaker
 
 
 class SABackend(DocumentBackend):
-    db = False
-    session = False
+    db = None
+    session = None
 
     def __new__(cls, host: str, dbname: str, user: str, password: str, port: str):
         return super(SABackend, cls).__new__(cls)

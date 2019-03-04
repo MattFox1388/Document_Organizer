@@ -25,11 +25,10 @@ class ParallelFileCrawler(FileCrawler, metaclass= TParallelFileCrawler):
 
     def crawl(self, path: str):
         futures = self.do_crawl(path)
-        print(len(futures))
         for f in futures:
             while not f.done():
                 time.sleep(2)
-            print(f.result().get_hash())
+            self._get_backend().store(f.result())
 
     def do_crawl(self, path: str) -> Collection[Future]:
         futures = []

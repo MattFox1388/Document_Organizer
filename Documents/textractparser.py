@@ -41,7 +41,7 @@ class TextractParser(DocumentParser):
             # Also need to find out what other files exist
             # Need to parse through the collection of data
             # and pull each extension to determine this
-            pass
+            return None
         else:
             text = textract.process(file_path)
             word_list = splitter.split(text)[:-1]
