@@ -48,5 +48,6 @@ class TestVideoParser(unittest.TestCase):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1: # To test individual video files add filenames as arguments (argv). Remember to use spaces
+        # example: $ python test_videoparser.py vid.avi vid.mov
         TestVideoParser.sample_files.append(sys.argv.pop())
     unittest.main()
