@@ -25,6 +25,8 @@ class SADocument(Document, base, metaclass=TDBDocument):
     date_parse = Column(TIMESTAMP)
     date_create = Column(TIMESTAMP)
     date_edit = Column(TIMESTAMP)
+    file_size = Column(Integer)
+    num_words = Column(Integer)
     keywords = relationship("DBKeywordInstance", backref='document', cascade="all, delete-orphan")
 
     keyword_map = {}
@@ -53,6 +55,12 @@ class SADocument(Document, base, metaclass=TDBDocument):
 
     def get_file_path(self) -> str:
         return self.path
+
+    def get_file_size(self) -> int:
+        return self.file_size
+
+    def get_num_words(self) -> int:
+        return self.num_words
 
     def _get_db_keyword(self, word: str):
         for keyword in self.keywords:

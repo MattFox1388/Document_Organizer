@@ -86,6 +86,22 @@ class Document(ABC, metaclass=TDocument):
         """
         pass
 
+    @abstractmethod
+    def get_file_size(self) -> int:
+        """
+        Returns the size of the file for this document.
+        :return: size of this document
+        """
+        pass
+
+    @abstractmethod
+    def get_num_words(self) -> int:
+        """
+        Returns the number of words in the document.
+        :return: number of words in document
+        """
+        pass
+
     def is_same(self, doc) -> bool:
         """
         Returns True whether the given document is a duplicate of this one.
@@ -101,7 +117,9 @@ class Document(ABC, metaclass=TDocument):
                 and self.get_parse_date() == other.get_parse_date() \
                 and self.get_file_path() == other.get_file_path() \
                 and self.get_create_date() == other.get_create_date() \
-                and self.get_edit_date() == other.get_edit_date()
+                and self.get_edit_date() == other.get_edit_date() \
+                and self.get_file_size() == other.get_file_size() \
+                and self.get_num_words() == other.get_num_words()
         return False
 
 
@@ -125,6 +143,12 @@ class SimpleDocument(Document):
     def get_file_path(self):
         return self._file_path
 
+    def get_file_size(self):
+        return self._file_size
+
+    def get_num_words(self):
+        return self._num_words
+
     '''This method uses ctime to find creation time (Windows), or last metadata change (Unix). 
        Second datetime in tuple will be the last modified datetime'''
 
@@ -139,13 +163,15 @@ class SimpleDocument(Document):
         mod_date = datetime.datetime.fromtimestamp(stat.st_mtime)
         return create_date, mod_date
 
-    def __init__(self, hash_val: str, keywords: Mapping[str,int], file_path: str, create_date: datetime, edit_date: datetime, parse_date: datetime = utc.now()):
+    def __init__(self, hash_val: str, keywords: Mapping[str,int], file_path: str, create_date: datetime, edit_date: datetime, file_size:int, num_words:int, parse_date: datetime = utc.now()):
         self._hash = hash_val
         self._keywords = keywords
         self._file_path = file_path
         self._parse_date = parse_date
         self._create_date = create_date
         self._edit_date = edit_date
+        self._file_size = file_size
+        self._num_words = num_words
 
     def __repr__(self):
         print('The hash value is: ' + self._hash)
@@ -153,5 +179,7 @@ class SimpleDocument(Document):
         print('the parse date is:' + self._parse_date.strftime("%Y-%m-%d %H:%M:%S"))
         print('Creation date: ' + self._create_date.strftime("%Y-%m-%d %H:%M:%S"))
         print('Modification date: ' + self._edit_date.strftime("%Y-%m-%d %H:%M:%S"))
+        print('The file size is: ' + str(self._file_size))
+        print('The number of words is: ' + str(self._num_words))
         for key, value in self._keywords.items():
             print('The word ' + key + ' has ' + str(value) + ' occurrences.')
