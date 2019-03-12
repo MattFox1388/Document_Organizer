@@ -1,8 +1,8 @@
 import unittest
 
-from Documents.document import Document
-from Documents.documentbackend import DocumentBackend
-from Documents.documentparser import DocumentParser
+from BackEnd.Documents import Document
+from BackEnd.Documents import DocumentBackend
+from BackEnd.Documents import DocumentParser
 
 
 class TestBaseAPI(unittest.TestCase):

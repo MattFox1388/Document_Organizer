@@ -5,7 +5,7 @@ from typing import Collection
 
 sys.path.append("..")
 
-from Documents.videoparser import VideoParser
+from BackEnd.Documents import VideoParser
 
 
 class TestVideoParser(unittest.TestCase):

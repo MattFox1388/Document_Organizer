@@ -1,6 +1,6 @@
 import sys
 import unittest
-from Documents.textractparser import TextractParser
+from BackEnd.Documents import TextractParser
 from typing import Collection
 import os.path
 
