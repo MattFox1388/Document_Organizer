@@ -84,15 +84,14 @@ class SABackend(StorageBackend):
             return False
         return True
 
-    def get(self, query: str) -> Collection[str]:
+    def get(self, query_text: str) -> Collection[str]:
         """
         Returns any documents that contain the given keyword.
         :param keyword: The keyword in question
         :return: Collection of documents
         """
-        session = self.session()
 
-        keyword = query
+        keyword = query_text
         documents = self._get_docs(keyword)
         idf = self._get_inverse_document_frequncy(documents)
 
