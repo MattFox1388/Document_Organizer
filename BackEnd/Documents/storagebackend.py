@@ -2,15 +2,15 @@ import math
 from abc import ABC, abstractmethod
 from typing import Collection, Mapping
 
-from BackEnd.Documents import Document
+from BackEnd.Documents.document import Document
 
 
-class TDocumentBackend(type):
+class TStorageBackend(type):
     pass
 
 
-class DocumentBackend(ABC):
-    __metaclass__ = TDocumentBackend
+class StorageBackend(ABC):
+    __metaclass__ = TStorageBackend
 
     @abstractmethod
     def _get_total_document_count(self) -> int:
@@ -47,7 +47,7 @@ class DocumentBackend(ABC):
         pass
 
     @abstractmethod
-    def get(self, keyword: str) -> Collection[Document]:
+    def get(self, keyword: str) -> Collection[str]:
         """
         Returns any documents that contain the given keyword.
         :param keyword: The keyword in question

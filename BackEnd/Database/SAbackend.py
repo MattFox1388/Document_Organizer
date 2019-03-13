@@ -1,23 +1,26 @@
+from BackEnd.Documents.document import Document
+from BackEnd.Documents.storagebackend import StorageBackend
 from .SAKeywordInstance import SAKeywordInstance
 from .SAKeyword import SAKeyword
 from .SADocument import SADocument
-from BackEnd.Documents import Document
-from BackEnd.Documents import DocumentBackend
 from typing import Collection, Mapping
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-class SABackend(DocumentBackend):
+class SABackend(StorageBackend):
     db = None
     session = None
+
+    def _query(self, *entities, **kwargs):
+        return self.session.query(*entities, **kwargs)
 
     def __new__(cls, host: str, dbname: str, user: str, password: str, port: str):
         return super(SABackend, cls).__new__(cls)
 
     def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
         # Open connection
-        database = "postgresql+psycopg2://%s:%s@%s:%s/%s"%(
+        database = "postgresql+psycopg2://%s:%s@%s:%s/%s" % (
             user, password, host, port, dbname)
         self.db = create_engine(database)
         self.session = sessionmaker(self.db)
@@ -81,7 +84,7 @@ class SABackend(DocumentBackend):
             return False
         return True
 
-    def get(self, keyword: str) -> Collection[Document]:
+    def get(self, query: str) -> Collection[str]:
         """
         Returns any documents that contain the given keyword.
         :param keyword: The keyword in question
@@ -89,9 +92,16 @@ class SABackend(DocumentBackend):
         """
         session = self.session()
 
-        documents = session.query(SADocument)\
+        keyword = query
+        documents = self._get_docs(keyword)
+        idf = self._get_inverse_document_frequncy(documents)
+
+        documents.sort(key= lambda d: StorageBackend._get_relevance(d, keyword, idf))
+        return [d.get_file_path for d in documents]
+
+    def _get_docs(self, keyword: str) -> Collection[SADocument]:
+        return self._query(SADocument) \
             .filter(SADocument.instance.keyword.in_(keyword)).all()
-        return documents
 
     def get_by_path(self, path: str) -> Document:
         """
@@ -102,7 +112,7 @@ class SABackend(DocumentBackend):
         """
         session = self.session()
 
-        documents = session.query(SADocument)\
+        documents = session.query(SADocument) \
             .filter(SADocument.path == path).all()
         return documents
         pass
@@ -127,8 +137,8 @@ class SABackend(DocumentBackend):
         """
         session = self.session()
 
-        documents = session.query(SADocument)\
-            .filter(SADocument.hash == doc.get_hash())\
+        documents = session.query(SADocument) \
+            .filter(SADocument.hash == doc.get_hash()) \
             .filter(SADocument.path != doc.get_file_path())
         return documents
 
