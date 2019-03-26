@@ -3,7 +3,6 @@ from BackEnd.Documents.storagebackend import StorageBackend
 from .SAKeywordInstance import SAKeywordInstance
 from .SAKeyword import SAKeyword
 from .SADocument import SADocument
-from typing import Collection, Mapping
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -33,7 +32,7 @@ class SABackend(StorageBackend):
         """
         return
 
-    def store(self, docs: Collection[Document]) -> bool:
+    def store(self, docs) -> bool:
         """
         Stores multiple documents into this backend that can be retrieved later.
         :param docs: A collection of documents that will be stored.
@@ -84,7 +83,7 @@ class SABackend(StorageBackend):
             return False
         return True
 
-    def get(self, query_text: str) -> Collection[str]:
+    def get(self, query_text: str):
         """
         Returns any documents that contain the given keyword.
         :param keyword: The keyword in question
@@ -98,7 +97,7 @@ class SABackend(StorageBackend):
         documents.sort(key= lambda d: StorageBackend._get_relevance(d, keyword, idf))
         return [d.get_file_path for d in documents]
 
-    def _get_docs(self, keyword: str) -> Collection[SADocument]:
+    def _get_docs(self, keyword: str):
         return self._query(SADocument) \
             .filter(SADocument.instance.keyword.in_(keyword)).all()
 
@@ -117,7 +116,7 @@ class SABackend(StorageBackend):
         pass
 
     # TODO: Implement
-    def get_duplicates(self) -> Mapping[int, Collection[Document]]:
+    def get_duplicates(self):
         """
         Returns all duplicates that are in this backend.
         The returned map has document hash codes as keys and Collection of all documents with that hash code as values.
@@ -125,7 +124,7 @@ class SABackend(StorageBackend):
         """
         pass
 
-    def get_duplicates_of(self, doc: Document) -> Collection[Document]:
+    def get_duplicates_of(self, doc: Document):
         """
         Returns all duplicates of the given document.
         It is HIGHLY recommended to override this method for each backend since default implementation gathers all
