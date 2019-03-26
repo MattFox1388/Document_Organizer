@@ -1,6 +1,5 @@
 import math
 from abc import ABC, abstractmethod
-from typing import Collection, Mapping
 
 from BackEnd.Documents.document import Document
 
@@ -20,7 +19,7 @@ class StorageBackend(ABC):
     def exists(self, file_path: str) -> bool:
         pass
 
-    def _get_inverse_document_frequncy(self, docs_with_term: Collection[Document]) -> float:
+    def _get_inverse_document_frequncy(self, docs_with_term) -> float:
         if not docs_with_term:
             return 0
         return math.log(self._get_total_document_count() / len(docs_with_term))
@@ -38,7 +37,7 @@ class StorageBackend(ABC):
         pass
 
     @abstractmethod
-    def store(self, docs: Collection[Document]) -> bool:
+    def store(self, docs) -> bool:
         """
         Stores multiple documents into this backend that can be retrieved later.
         :param docs: A collection of documents that will be stored.
@@ -47,7 +46,7 @@ class StorageBackend(ABC):
         pass
 
     @abstractmethod
-    def get(self, keyword: str) -> Collection[str]:
+    def get(self, keyword: str):
         """
         Returns any documents that contain the given keyword.
         :param keyword: The keyword in question
@@ -66,7 +65,7 @@ class StorageBackend(ABC):
         pass
 
     @abstractmethod
-    def get_duplicates(self) -> Mapping[int,Collection[Document]]:
+    def get_duplicates(self):
         """
         Returns all duplicates that are in this backend.
         The returned map has document hash codes as keys and Collection of all documents with that hash code as values.
@@ -74,7 +73,7 @@ class StorageBackend(ABC):
         """
         pass
 
-    def get_duplicates_of(self, doc: Document) -> Collection[Document]:
+    def get_duplicates_of(self, doc: Document):
         """
         Returns all duplicates of the given document.
         It is HIGHLY recommended to override this method for each backend since default implementation gathers all

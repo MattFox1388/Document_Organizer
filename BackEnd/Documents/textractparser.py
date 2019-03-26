@@ -1,8 +1,6 @@
 
 from typing import Collection
 
-from BackEnd.Documents import DocumentParser
-from BackEnd.Documents import SimpleDocument, Document
 import textract
 import os.path
 import utc
@@ -10,6 +8,9 @@ from string import punctuation
 from collections import Counter
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+
+from BackEnd.Documents.document import Document, SimpleDocument
+from BackEnd.Documents.documentparser import DocumentParser
 
 EXTENSIONS = {'.csv', '.doc', '.docx', '.eml', '.epub', '.gif', '.jpg', '.jpeg', '.json', '.html', '.htm', '.mp3',
               '.msg', '.odt', '.ogg', '.pdf', '.png', '.pptx', '.ps', '.rtf', '.tiff', '.tif', '.txt', '.wav', 'xlsx',

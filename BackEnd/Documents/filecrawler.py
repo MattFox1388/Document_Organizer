@@ -1,7 +1,7 @@
 from abc import ABC, ABCMeta, abstractmethod
 
-from BackEnd.Documents import DocumentBackend
-from BackEnd.Documents import DocumentParser
+from BackEnd.Documents.documentparser import DocumentParser
+from BackEnd.Documents.storagebackend import StorageBackend
 
 
 class TFileCrawler(ABCMeta):
@@ -27,5 +27,5 @@ class FileCrawler(ABC, metaclass=TFileCrawler):
     def crawl(self, path: str):
         pass
 
-    def __init__(self, backend: DocumentBackend):
+    def __init__(self, backend: StorageBackend):
         self._backend = backend

@@ -1,9 +1,8 @@
 import hashlib
 import os
 from abc import ABC, abstractmethod
-from typing import Collection
 
-from BackEnd.Documents import Document
+from BackEnd.Documents.document import Document
 
 
 class TDocumentParser(type):
@@ -14,7 +13,7 @@ class DocumentParser(ABC):
     __metaclass__ = TDocumentParser
 
     @abstractmethod
-    def get_compatible_extensions(self) -> Collection[str]:
+    def get_compatible_extensions(self):
         """
         Returns a collection of all file extensions that this parser can parse into documents.
         :return: collection of file extensions

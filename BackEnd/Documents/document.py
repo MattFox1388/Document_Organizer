@@ -1,7 +1,6 @@
 import os
 import datetime
 from abc import ABC, ABCMeta, abstractmethod
-from typing import Mapping
 
 import utc
 
@@ -28,7 +27,7 @@ class Document(ABC, metaclass=TDocument):
         pass
 
     @abstractmethod
-    def get_keywords(self) -> Mapping[str,int]:
+    def get_keywords(self):
         """
         Returns a map of all the keywords in this document and their occurrences.
         :return: Map of keywords to occurrences
@@ -163,7 +162,7 @@ class SimpleDocument(Document):
         mod_date = datetime.datetime.fromtimestamp(stat.st_mtime)
         return create_date, mod_date
 
-    def __init__(self, hash_val: str, keywords: Mapping[str,int], file_path: str, create_date: datetime, edit_date: datetime, file_size:int, num_words:int, parse_date: datetime = utc.now()):
+    def __init__(self, hash_val: str, keywords, file_path: str, create_date: datetime, edit_date: datetime, file_size:int, num_words:int, parse_date: datetime = utc.now()):
         self._hash = hash_val
         self._keywords = keywords
         self._file_path = file_path

@@ -1,10 +1,9 @@
-from BackEnd.Documents import DocumentParser
+from BackEnd.Documents.documentparser import DocumentParser
 from .document import Document, SimpleDocument
 import os
 import utc
 import tempfile
 from pathlib import Path
-from typing import Mapping, Collection
 import speech_recognition as sr
 import moviepy.editor as mp
 from nltk.corpus import stopwords
@@ -52,7 +51,7 @@ class VideoParser(DocumentParser):
         return SimpleDocument(hash_val=video_hash, keywords=word_dict, file_path=file_path, parse_date=utc.now(),
                               create_date=creat_date, edit_date=mod_date)
 
-    def get_compatible_extensions(self) -> Collection[str]:
+    def get_compatible_extensions(self):
         return VIDEO_EXTS
 
     @staticmethod
@@ -62,7 +61,7 @@ class VideoParser(DocumentParser):
         audio_clip.audio.write_audiofile(target_audio_path, nbytes=2)
 
     @staticmethod
-    def filter_text(audio_text) -> Mapping[str, int]:
+    def filter_text(audio_text):
         # filter transcribed text
         stop_words = set(stopwords.words('english'))
         text_tokens = word_tokenize(audio_text)
