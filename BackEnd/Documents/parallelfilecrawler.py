@@ -46,7 +46,7 @@ class ParallelFileCrawler(FileCrawler):
         self._executor = ThreadPoolExecutor(max_workers=workers)
 
 
-root = 'D:/UWM'
+root = '/home/Project/java8doc'
 
 crawler = ParallelFileCrawler(8, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', \
                                            '5432'))
