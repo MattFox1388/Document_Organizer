@@ -10,10 +10,6 @@ class StorageBackend(ABC):
     def get_total_document_count(self) -> int:
         pass
 
-    @abstractmethod
-    def exists(self, file_path: str) -> bool:
-        pass
-
     def _get_inverse_document_frequncy(self, docs_with_term) -> float:
         if not docs_with_term:
             return 0

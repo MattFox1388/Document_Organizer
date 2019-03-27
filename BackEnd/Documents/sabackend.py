@@ -103,6 +103,7 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
             self._get_db_keyword(word).set_count(count)
         self.keyword_map[word] = count
 
+
 class SABackend(StorageBackend):
     db = None
     session = None
