@@ -40,16 +40,21 @@ class TextractParser(DocumentParser):
             # and pull each extension to determine this
             return None
         else:
+            file_size = os.path.getsize('C:\\Python27\\Lib\\genericpath.py')
+
             text = textract.process(file_path)
             text = text.decode('utf-8')
             word_list = word_tokenize(text)
             word_list = [''.join(c for c in s if c not in punctuation) for s in word_list]
             word_list = [s for s in word_list if s]
             word_list = [e.lower() for e in word_list]
+
+            total_words = len(word_list)
+
             stop = set(stopwords.words('english'))
             tokens = [w for w in word_list if not w in stop]
             word_map = dict(Counter(tokens))
             file_hash = int(self.compute_hash(file_path, 65536), 16)
             create, edit = SimpleDocument.find_create_and_mod(file_path)
             return SimpleDocument(hash_val=file_hash, keywords=word_map, file_path=file_path, parse_date=utc.now(),
-                                  create_date=create, edit_date=edit)
+                                  create_date=create, edit_date=edit, file_size=file_size, total_words=total_words)
