@@ -62,4 +62,4 @@ class TextractParser(DocumentParser):
                                   create_date=create, edit_date=edit, file_size=file_size, total_words=total_words)
 
     def __init__(self):
-        _stop = set(stopwords.words('english'))
+        self._stop = set(stopwords.words('english'))
