@@ -1,14 +1,14 @@
 from abc import ABC, ABCMeta, abstractmethod
 
-from BackEnd.Documents.documentparser import DocumentParser
-from BackEnd.Documents.storagebackend import StorageBackend
+from documentparser import DocumentParser
+from storagebackend import StorageBackend
 
 
 class TFileCrawler(ABCMeta):
     pass
 
 
-class FileCrawler(ABC, metaclass=TFileCrawler):
+class FileCrawler(ABC):
 
     _parsers = {}
 

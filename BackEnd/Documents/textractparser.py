@@ -1,6 +1,3 @@
-
-from typing import Collection
-
 import textract
 import os.path
 import utc
@@ -9,8 +6,8 @@ from collections import Counter
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-from BackEnd.Documents.document import Document, SimpleDocument
-from BackEnd.Documents.documentparser import DocumentParser
+from document import Document, SimpleDocument
+from documentparser import DocumentParser
 
 EXTENSIONS = {'.csv', '.doc', '.docx', '.eml', '.epub', '.gif', '.jpg', '.jpeg', '.json', '.html', '.htm', '.mp3',
               '.msg', '.odt', '.ogg', '.pdf', '.png', '.pptx', '.ps', '.rtf', '.tiff', '.tif', '.txt', '.wav', 'xlsx',
@@ -19,7 +16,7 @@ EXTENSIONS = {'.csv', '.doc', '.docx', '.eml', '.epub', '.gif', '.jpg', '.jpeg',
 
 class TextractParser(DocumentParser):
 
-    def get_compatible_extensions(self) -> Collection[str]:
+    def get_compatible_extensions(self):
         return EXTENSIONS
 
     """

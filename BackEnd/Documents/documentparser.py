@@ -2,15 +2,10 @@ import hashlib
 import os
 from abc import ABC, abstractmethod
 
-from BackEnd.Documents.document import Document
-
-
-class TDocumentParser(type):
-    pass
+from document import Document
 
 
 class DocumentParser(ABC):
-    __metaclass__ = TDocumentParser
 
     @abstractmethod
     def get_compatible_extensions(self):

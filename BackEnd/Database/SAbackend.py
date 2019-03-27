@@ -1,5 +1,5 @@
-from BackEnd.Documents.document import Document
-from BackEnd.Documents.storagebackend import StorageBackend
+from document import Document
+from storagebackend import StorageBackend
 from .SAKeywordInstance import SAKeywordInstance
 from .SAKeyword import SAKeyword
 from .SADocument import SADocument

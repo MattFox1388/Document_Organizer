@@ -2,18 +2,15 @@ import os
 import time
 from concurrent.futures import Future, ThreadPoolExecutor
 
-from BackEnd.Documents.document import Document
-from BackEnd.Documents.documentparser import DocumentParser
-from BackEnd.Documents.filecrawler import TFileCrawler, FileCrawler
-from BackEnd.Documents.textractparser import TextractParser
-from BackEnd.Documents.videoparser import VideoParser
+from SAbackend import SABackend
+from document import Document
+from documentparser import DocumentParser
+from filecrawler import FileCrawler
+from storagebackend import StorageBackend
+from textractparser import TextractParser
+from videoparser import VideoParser
 
-
-class TParallelFileCrawler(TFileCrawler):
-    pass
-
-
-class ParallelFileCrawler(FileCrawler, metaclass= TParallelFileCrawler):
+class ParallelFileCrawler(FileCrawler):
 
     def _parse_file(self, parser: DocumentParser, file_path: str) -> Document:
         return parser.parse(file_path)
@@ -28,7 +25,7 @@ class ParallelFileCrawler(FileCrawler, metaclass= TParallelFileCrawler):
                 time.sleep(2)
             doc = f.result()
             if doc is not None:
-                print(f.result().get_keywords)
+                print(f.result().get_keywords())
                 #self._get_backend().store(f.result())
 
     def do_crawl(self, path: str):
@@ -45,13 +42,14 @@ class ParallelFileCrawler(FileCrawler, metaclass= TParallelFileCrawler):
                 futures.append(self._submit(parser, entry_path))
         return futures
 
-    def __init__(self, workers: int):
+    def __init__(self, workers: int, backend: StorageBackend):
         self._executor = ThreadPoolExecutor(max_workers=workers)
 
 
 root = 'D:/UWM'
 
-crawler = ParallelFileCrawler(8)
+crawler = ParallelFileCrawler(8, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', \
+                                           '5432'))
 crawler.register_parser(TextractParser())
 crawler.register_parser(VideoParser())
 

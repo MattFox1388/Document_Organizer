@@ -1,15 +1,10 @@
 import os
 import datetime
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 import utc
 
-
-class TDocument(ABCMeta):
-    pass
-
-
-class Document(ABC, metaclass=TDocument):
+class Document(ABC):
 
     @abstractmethod
     def get_total_words(self) -> int:
@@ -172,13 +167,8 @@ class SimpleDocument(Document):
         self._file_size = file_size
         self._num_words = num_words
 
+    def __str__(self):
+        return self.get_file_path()
+
     def __repr__(self):
-        print('The hash value is: ' + self._hash)
-        print('The file path is: ' + self._file_path)
-        print('the parse date is:' + self._parse_date.strftime("%Y-%m-%d %H:%M:%S"))
-        print('Creation date: ' + self._create_date.strftime("%Y-%m-%d %H:%M:%S"))
-        print('Modification date: ' + self._edit_date.strftime("%Y-%m-%d %H:%M:%S"))
-        print('The file size is: ' + str(self._file_size))
-        print('The number of words is: ' + str(self._num_words))
-        for key, value in self._keywords.items():
-            print('The word ' + key + ' has ' + str(value) + ' occurrences.')
+        return str(self)

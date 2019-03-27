@@ -1,5 +1,5 @@
-from BackEnd.Documents.documentparser import DocumentParser
-from .document import Document, SimpleDocument
+from documentparser import DocumentParser
+from document import Document, SimpleDocument
 import os
 import utc
 import tempfile

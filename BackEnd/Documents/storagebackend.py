@@ -1,15 +1,10 @@
 import math
 from abc import ABC, abstractmethod
 
-from BackEnd.Documents.document import Document
-
-
-class TStorageBackend(type):
-    pass
+from document import Document
 
 
 class StorageBackend(ABC):
-    __metaclass__ = TStorageBackend
 
     @abstractmethod
     def _get_total_document_count(self) -> int:
