@@ -19,6 +19,9 @@ class TextractParser(DocumentParser):
     def get_compatible_extensions(self):
         return EXTENSIONS
 
+    def _get_stop_words(self):
+        return self._stop
+
     """
     Removes text from in front of the extension and then checks
     to see if the extension is compatible. If not compatible, it
@@ -51,10 +54,12 @@ class TextractParser(DocumentParser):
 
             total_words = len(word_list)
 
-            stop = set(stopwords.words('english'))
-            tokens = [w for w in word_list if not w in stop]
+            tokens = [w for w in word_list if not w in self._get_stop_words()]
             word_map = dict(Counter(tokens))
             file_hash = int(self.compute_hash(file_path, 65536), 16)
             create, edit = SimpleDocument.find_create_and_mod(file_path)
             return SimpleDocument(hash_val=file_hash, keywords=word_map, file_path=file_path, parse_date=utc.now(),
                                   create_date=create, edit_date=edit, file_size=file_size, total_words=total_words)
+
+    def __init__(self):
+        _stop = set(stopwords.words('english'))
