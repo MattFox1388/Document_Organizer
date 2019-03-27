@@ -7,7 +7,7 @@ from document import Document
 class StorageBackend(ABC):
 
     @abstractmethod
-    def _get_total_document_count(self) -> int:
+    def get_total_document_count(self) -> int:
         pass
 
     @abstractmethod
@@ -17,7 +17,7 @@ class StorageBackend(ABC):
     def _get_inverse_document_frequncy(self, docs_with_term) -> float:
         if not docs_with_term:
             return 0
-        return math.log(self._get_total_document_count() / len(docs_with_term))
+        return math.log(self.get_total_document_count() / len(docs_with_term))
 
     @staticmethod
     def _get_relevance(doc: Document, term: str, idf: float) -> float:

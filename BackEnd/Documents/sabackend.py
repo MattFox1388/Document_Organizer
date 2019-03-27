@@ -128,6 +128,9 @@ class SABackend(StorageBackend):
         """
         return
 
+    def get_total_document_count(self) -> int:
+        return self._query(SADocument).count()
+
     def store(self, docs) -> bool:
         """
         Stores multiple documents into this backend that can be retrieved later.
