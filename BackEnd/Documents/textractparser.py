@@ -40,7 +40,7 @@ class TextractParser(DocumentParser):
             # and pull each extension to determine this
             return None
         else:
-            file_size = os.path.getsize('C:\\Python27\\Lib\\genericpath.py')
+            file_size = os.path.getsize(file_path)
 
             text = textract.process(file_path)
             text = text.decode('utf-8')
