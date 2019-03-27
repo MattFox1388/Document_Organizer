@@ -1,11 +1,107 @@
+import datetime
+from abc import ABCMeta
+
+from frozendict import frozendict
+from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
+
 from document import Document
 from storagebackend import StorageBackend
-from .SAKeywordInstance import SAKeywordInstance
-from .SAKeyword import SAKeyword
-from .SADocument import SADocument
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, TIMESTAMP
+from sqlalchemy.orm import sessionmaker, relationship
 
+base = declarative_base()
+
+class SAKeyword(base):
+    __tablename__ = 'keyword'
+
+    keyword_id = Column(Integer, primary_key=True)
+    keyword = Column(String)
+
+    def get_name(self) -> str:
+        return self.keyword
+
+
+class SAKeywordInstance(base):
+    __tablename__ = 'keyword_instance'
+
+    keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True)
+    keyword = relationship(SAKeyword)
+    file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
+    count = Column(Integer)
+
+    def get_document(self):
+        return self.document
+
+    def get_word(self) -> str:
+        return self.keyword.get_name()
+
+    def get_count(self) -> int:
+        return self.count
+
+    def set_count(self, new_count: int):
+        count = new_count
+
+
+class ABCBaseMeta(ABCMeta, DeclarativeMeta):
+    pass
+
+
+class SADocument(Document, base, metaclass=ABCBaseMeta):
+    __tablename__ = 'document'
+
+    file_id = Column(Integer, primary_key=True)
+    path = Column(String)
+    hash = Column(String)
+    date_parse = Column(TIMESTAMP)
+    date_create = Column(TIMESTAMP)
+    date_edit = Column(TIMESTAMP)
+    file_size = Column(Integer)
+    num_words = Column(Integer)
+    keywords = relationship("DBKeywordInstance", backref='document', cascade="all, delete-orphan")
+
+    keyword_map = {}
+    safe_keyword_map = None
+
+    def __init__(self, *args, **kwargs):
+        for keyword in self.keywords:
+            self.keyword_map.update({keyword.get_word():keyword.get_count()})
+        self.safe_keyword_map = frozendict(self.keyword_map)
+        base.__init__(self, *args, **kwargs)
+
+    def get_hash(self) -> str:
+        return self.hash
+
+    def get_keywords(self):
+        return dict(self.safe_keyword_map)
+
+    def get_parse_date(self) -> datetime:
+        return self.date_parse
+
+    def get_create_date(self) -> datetime:
+        return self.date_create
+
+    def get_edit_date(self) -> datetime:
+        return self.date_edit
+
+    def get_file_path(self) -> str:
+        return self.path
+
+    def get_file_size(self) -> int:
+        return self.file_size
+
+    def get_num_words(self) -> int:
+        return self.num_words
+
+    def _get_db_keyword(self, word: str):
+        for keyword in self.keywords:
+            if keyword.get_word() == word:
+                return keyword
+        return None
+
+    def add_keyword(self, word: str, count: int):
+        if self.occurs(word):
+            self._get_db_keyword(word).set_count(count)
+        self.keyword_map[word] = count
 
 class SABackend(StorageBackend):
     db = None
