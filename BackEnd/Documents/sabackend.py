@@ -14,8 +14,8 @@ base = declarative_base()
 class SAKeyword(base):
     __tablename__ = 'keyword'
 
-    keyword_id = Column(Integer, primary_key=True)
-    keyword = Column(String)
+    keyword_id = Column(Integer, primary_key=True, nullable=False)
+    keyword = Column(String, nullable=False)
 
     def get_name(self) -> str:
         return self.keyword
@@ -24,8 +24,8 @@ class SAKeyword(base):
 class SAKeywordInstance(base):
     __tablename__ = 'keyword_instance'
 
-    keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True)
-    keyword = relationship(SAKeyword)
+    keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True, nullable=False)
+    keyword = relationship(SAKeyword, nullable=False)
     file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
     count = Column(Integer)
 
@@ -49,14 +49,14 @@ class ABCBaseMeta(ABCMeta, DeclarativeMeta):
 class SADocument(Document, base, metaclass=ABCBaseMeta):
     __tablename__ = 'document'
 
-    file_id = Column(Integer, primary_key=True)
-    path = Column(String)
-    hash = Column(String)
-    date_parse = Column(TIMESTAMP)
-    date_create = Column(TIMESTAMP)
-    date_edit = Column(TIMESTAMP)
-    file_size = Column(Integer)
-    num_words = Column(Integer)
+    file_id = Column(Integer, primary_key=True, nullable=False)
+    path = Column(String, nullable=False)
+    hash = Column(String, nullable=False)
+    date_parse = Column(TIMESTAMP, nullable=False)
+    date_create = Column(TIMESTAMP, nullable=False)
+    date_edit = Column(TIMESTAMP, nullable=False)
+    file_size = Column(Integer, nullable=False)
+    num_words = Column(Integer, nullable=False)
     keywords = relationship("DBKeywordInstance", backref='document', cascade="all, delete-orphan")
 
     keyword_map = {}
