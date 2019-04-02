@@ -173,7 +173,8 @@ class SABackend(StorageBackend):
                                         date_create=document.get_create_date(),
                                         date_edit=document.get_edit_date(),
                                         date_parse=document.get_parse_date(),
-                                        file_size=document.get_file_size())
+                                        file_size=document.get_file_size(),
+                                        num_words=document.get_num_words())
                     session.add(newdoc)
                     session.flush()
 
