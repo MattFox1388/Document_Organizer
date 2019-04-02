@@ -111,9 +111,6 @@ class SABackend(StorageBackend):
     db = None
     session = None
 
-    def _query(self, *entities, **kwargs):
-        return self.session.query(*entities, **kwargs)
-
     def __new__(cls, host: str, dbname: str, user: str, password: str, port: str):
         return super(SABackend, cls).__new__(cls)
 
@@ -204,7 +201,7 @@ class SABackend(StorageBackend):
         return [d.get_file_path for d in documents]
 
     def _get_docs(self, keyword: str):
-        return self._query(SADocument) \
+        return self.session.query(SADocument) \
             .filter(SADocument.instance.keyword.in_(keyword)).all()
 
     def get_by_path(self, path: str) -> Document:
