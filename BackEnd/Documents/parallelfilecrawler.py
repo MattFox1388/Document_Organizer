@@ -25,9 +25,8 @@ class ParallelFileCrawler(FileCrawler):
                 time.sleep(2)
             doc = f.result()
             if doc is not None:
-                document = f.result()
-                print(document.get_keywords())
-                self._get_backend().store([document])
+                print(doc.get_keywords())
+                self._get_backend().store([doc])
 
     def do_crawl(self, path: str):
         futures = []
@@ -50,7 +49,7 @@ class ParallelFileCrawler(FileCrawler):
 
 root = '/home/Project/java8doc'
 
-crawler = ParallelFileCrawler(8, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', \
+crawler = ParallelFileCrawler(1, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', \
                                            '5432'))
 crawler.register_parser(TextractParser())
 crawler.register_parser(VideoParser())

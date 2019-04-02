@@ -1,5 +1,7 @@
 import datetime
 from abc import ABCMeta
+import sys
+import traceback
 
 from frozendict import frozendict
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
@@ -10,6 +12,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, TIMES
 from sqlalchemy.orm import sessionmaker, relationship
 
 base = declarative_base()
+
 
 class SAKeyword(base):
     __tablename__ = 'keyword'
@@ -57,14 +60,14 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
     date_edit = Column(TIMESTAMP, nullable=False)
     file_size = Column(Integer, nullable=False)
     num_words = Column(Integer, nullable=False)
-    keywords = relationship("DBKeywordInstance", backref='document', cascade="all, delete-orphan")
+    keywords = relationship("SAKeywordInstance", backref='document', cascade="all, delete-orphan")
 
     keyword_map = {}
     safe_keyword_map = None
 
     def __init__(self, *args, **kwargs):
         for keyword in self.keywords:
-            self.keyword_map.update({keyword.get_word():keyword.get_count()})
+            self.keyword_map.update({keyword.get_word(): keyword.get_count()})
         self.safe_keyword_map = frozendict(self.keyword_map)
         base.__init__(self, *args, **kwargs)
 
@@ -140,7 +143,9 @@ class SABackend(StorageBackend):
         """
         session = self.session()
         try:
+            print('storing')
             for document in docs:
+                print('starting doc')
                 # Check if all keywords are already in database.  If not, add them.
                 for keyword, count in document.get_keywords().items():
                     kw = SAKeyword(keyword=keyword)
@@ -150,6 +155,8 @@ class SABackend(StorageBackend):
                     else:
                         session.add(kw)
                 session.flush()
+
+                print('finished keywords')
 
                 # Check to see if the document exists and if the hash matches
                 doc_instance = session.query(SADocument).filter(SADocument.path == document.get_file_path()).first()
@@ -179,6 +186,7 @@ class SABackend(StorageBackend):
                     session.flush()
             session.commit()
         except:
+            print(str(traceback.format_exc()))
             session.rollback()
             return False
         return True
@@ -194,7 +202,7 @@ class SABackend(StorageBackend):
         documents = self._get_docs(keyword)
         idf = self._get_inverse_document_frequncy(documents)
 
-        documents.sort(key= lambda d: StorageBackend._get_relevance(d, keyword, idf))
+        documents.sort(key=lambda d: StorageBackend._get_relevance(d, keyword, idf))
         return [d.get_file_path for d in documents]
 
     def _get_docs(self, keyword: str):

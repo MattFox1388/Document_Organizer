@@ -4,11 +4,8 @@ from abc import ABC, abstractmethod
 
 import utc
 
-class Document(ABC):
 
-    @abstractmethod
-    def get_total_words(self) -> int:
-        pass
+class Document(ABC):
 
     def get_term_frequency(self, term: str) -> float:
         return self.get_occurrences(term) / self.get_total_words()
@@ -145,9 +142,6 @@ class SimpleDocument(Document):
 
     '''This method uses ctime to find creation time (Windows), or last metadata change (Unix). 
        Second datetime in tuple will be the last modified datetime'''
-
-    def get_total_words(self) -> int:
-        pass
 
     @staticmethod
     def find_create_and_mod(file_path) -> (datetime, datetime):
