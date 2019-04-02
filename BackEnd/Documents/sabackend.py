@@ -130,7 +130,7 @@ class SABackend(StorageBackend):
         return
 
     def get_total_document_count(self) -> int:
-        return self.session().query(SADocument).count()
+        return self._query(SADocument).count()
 
     def store(self, docs) -> bool:
         """
@@ -201,8 +201,10 @@ class SABackend(StorageBackend):
         return [d.get_file_path for d in documents]
 
     def _get_docs(self, keyword: str):
-        keyword_id = self.session().query(SAKeyword).filter(SAKeyword.keyword.eq_(keyword)).first().keyword_id
-        return self.session().query(SADocument).filter(SADocument.keywords.keyword_id.eq_(keyword_id)).all()
+        keyword_id = self.session().query(SAKeyword).filter(SAKeyword.keyword == keyword).first().keyword_id
+        instances = self.session().query(SAKeywordInstance).filter(SAKeywordInstance.keyword_id == keyword_id).all()
+        ids = [instance.file_id for instance in instances]
+        return self.session().query(SADocument).filter(SADocument.file_id.in_(ids)).all()
 
     def get_by_path(self, path: str) -> Document:
         """
