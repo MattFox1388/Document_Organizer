@@ -43,6 +43,7 @@ class ParallelFileCrawler(FileCrawler):
         return futures
 
     def __init__(self, workers: int, backend: StorageBackend):
+        super().__init__(backend)
         self._executor = ThreadPoolExecutor(max_workers=workers)
 
 
