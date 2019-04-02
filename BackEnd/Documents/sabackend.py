@@ -143,9 +143,7 @@ class SABackend(StorageBackend):
         """
         session = self.session()
         try:
-            print('storing')
             for document in docs:
-                print('starting doc')
                 # Check if all keywords are already in database.  If not, add them.
                 for keyword, count in document.get_keywords().items():
                     kw = SAKeyword(keyword=keyword)
@@ -155,8 +153,6 @@ class SABackend(StorageBackend):
                     else:
                         session.add(kw)
                 session.flush()
-
-                print('finished keywords')
 
                 # Check to see if the document exists and if the hash matches
                 doc_instance = session.query(SADocument).filter(SADocument.path == document.get_file_path()).first()
