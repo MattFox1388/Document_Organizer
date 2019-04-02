@@ -201,8 +201,8 @@ class SABackend(StorageBackend):
         return [d.get_file_path for d in documents]
 
     def _get_docs(self, keyword: str):
-        return self.session().query(SADocument) \
-            .filter(SADocument.keywords.keyword.in_(keyword)).all()
+        keyword_id = self.session().query(SAKeyword).filter(SAKeyword.keyword == keyword).first().keyword_id
+        return keyword_id
 
     def get_by_path(self, path: str) -> Document:
         """
