@@ -202,7 +202,7 @@ class SABackend(StorageBackend):
 
     def _get_docs(self, keyword: str):
         return self.session().query(SADocument) \
-            .filter(SADocument.instance.keyword.in_(keyword)).all()
+            .filter(SADocument.keywords.keyword.in_(keyword)).all()
 
     def get_by_path(self, path: str) -> Document:
         """
