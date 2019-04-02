@@ -25,7 +25,7 @@ class SAKeywordInstance(base):
     __tablename__ = 'keyword_instance'
 
     keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True, nullable=False)
-    keyword = relationship(SAKeyword, nullable=False)
+    keyword = relationship(SAKeyword)
     file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
     count = Column(Integer)
 
