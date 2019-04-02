@@ -25,8 +25,9 @@ class ParallelFileCrawler(FileCrawler):
                 time.sleep(2)
             doc = f.result()
             if doc is not None:
-                print(f.result().get_keywords())
-                #self._get_backend().store(f.result())
+                document = f.result()
+                print(document.get_keywords())
+                self._get_backend().store([document])
 
     def do_crawl(self, path: str):
         futures = []
