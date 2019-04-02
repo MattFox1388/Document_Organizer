@@ -130,7 +130,7 @@ class SABackend(StorageBackend):
         return
 
     def get_total_document_count(self) -> int:
-        return self._query(SADocument).count()
+        return self.session().query(SADocument).count()
 
     def store(self, docs) -> bool:
         """
