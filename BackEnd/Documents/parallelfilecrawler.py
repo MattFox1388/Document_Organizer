@@ -1,4 +1,6 @@
 import os
+import signal
+import sys
 import time
 from concurrent.futures import Future, ThreadPoolExecutor
 
@@ -42,10 +44,16 @@ class ParallelFileCrawler(FileCrawler):
                 futures.append(self._submit(parser, entry_path))
         return futures
 
+    def stop(self):
+        self._executor.shutdown(wait=False)
+
     def __init__(self, workers: int, backend: StorageBackend):
         super().__init__(backend)
         self._executor = ThreadPoolExecutor(max_workers=workers)
 
+
+def sig_handler(sig, frame):
+    crawler.stop()
 
 if __name__ == "__main__":
     root = '/home/Project/java8doc'
@@ -55,5 +63,7 @@ if __name__ == "__main__":
 
     crawler.register_parser(TextractParser())
     crawler.register_parser(VideoParser())
+
+    signal.signal(signal.SIGINT, sig_handler)
 
     crawler.crawl(root)

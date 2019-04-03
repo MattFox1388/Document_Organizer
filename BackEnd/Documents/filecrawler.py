@@ -30,5 +30,9 @@ class FileCrawler(ABC):
     def crawl(self, path: str):
         pass
 
+    @abstractmethod
+    def stop(self):
+        pass
+
     def __init__(self, backend: StorageBackend):
         self._backend = backend
