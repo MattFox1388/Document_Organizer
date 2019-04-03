@@ -8,4 +8,4 @@ query = sys.argv[1]
 
 docs = back._get_docs(query)
 for doc in docs:
-    print(doc.get_file_path())
+    print(str(doc.get_file_path()) + ' - ' + str(doc.get_hash()))
