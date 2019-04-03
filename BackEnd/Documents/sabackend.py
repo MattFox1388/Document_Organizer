@@ -1,6 +1,5 @@
 import datetime
 from abc import ABCMeta
-import sys
 import traceback
 
 from frozendict import frozendict

@@ -23,6 +23,9 @@ class FileCrawler(ABC):
             if overwrite or ext not in self._parsers:
                 self._parsers[ext] = parser
 
+    def register(self, parser: DocumentParser, ext: str):
+        self._parser[ext] = parser
+
     @abstractmethod
     def crawl(self, path: str):
         pass

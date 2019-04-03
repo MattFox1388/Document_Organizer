@@ -51,7 +51,11 @@ root = '/home/Project/java8doc'
 
 crawler = ParallelFileCrawler(1, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', \
                                            '5432'))
-crawler.register_parser(TextractParser())
-crawler.register_parser(VideoParser())
+
+textp = TextractParser()
+crawler.register(textp, 'jpg')
+crawler.register(textp, 'gif')
+#crawler.register_parser(TextractParser())
+#crawler.register_parser(VideoParser())
 
 crawler.crawl(root)
