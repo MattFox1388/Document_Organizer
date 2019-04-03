@@ -25,8 +25,7 @@ class ParallelFileCrawler(FileCrawler):
                 time.sleep(1)
             doc = f.result()
             if doc is not None:
-                print(doc.get_file_path())
-                print(doc.get_keywords())
+                print('\n' + doc.get_file_path() + '\n' + str(doc.get_keywords()))
                 self._get_backend().store([doc])
 
     def do_crawl(self, path: str):
@@ -48,14 +47,13 @@ class ParallelFileCrawler(FileCrawler):
         self._executor = ThreadPoolExecutor(max_workers=workers)
 
 
-root = '/home/Project/java8doc'
+if __name__ == "__main__":
+    root = '/home/Project/java8doc'
 
-crawler = ParallelFileCrawler(1, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', \
-                                           '5432'))
+    crawler = ParallelFileCrawler(1, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org',
+                                               'd3NXWWfyHT', '5432'))
 
-textp = TextractParser()
-crawler.register(textp, '.gif')
-#crawler.register_parser(TextractParser())
-#crawler.register_parser(VideoParser())
+    crawler.register_parser(TextractParser())
+    crawler.register_parser(VideoParser())
 
-crawler.crawl(root)
+    crawler.crawl(root)
