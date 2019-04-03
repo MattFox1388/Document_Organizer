@@ -50,7 +50,7 @@ class ParallelFileCrawler(FileCrawler):
 if __name__ == "__main__":
     root = '/home/Project/java8doc'
 
-    crawler = ParallelFileCrawler(1, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org',
+    crawler = ParallelFileCrawler(4, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org',
                                                'd3NXWWfyHT', '5432'))
 
     crawler.register_parser(TextractParser())
