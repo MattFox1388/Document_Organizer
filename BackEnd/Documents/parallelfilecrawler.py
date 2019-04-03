@@ -54,7 +54,6 @@ crawler = ParallelFileCrawler(1, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'docume
                                            '5432'))
 
 textp = TextractParser()
-crawler.register(textp, '.jpg')
 crawler.register(textp, '.gif')
 #crawler.register_parser(TextractParser())
 #crawler.register_parser(VideoParser())
