@@ -203,7 +203,7 @@ class SABackend(StorageBackend):
         result = self.db.engine.execute("SELECT file_id \
         FROM keyword_instance \
         LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
-        WHERE keyword.keyword LIKE " + keyword + ";")
+        WHERE keyword.keyword LIKE '" + keyword + "';")
         return result
 
     def get_by_path(self, path: str) -> Document:
