@@ -204,7 +204,7 @@ class SABackend(StorageBackend):
         FROM keyword_instance \
         LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
         WHERE keyword.keyword LIKE '" + keyword + "';")
-        return [row for row in result]
+        return result[0]
 
     def get_by_path(self, path: str) -> Document:
         """
