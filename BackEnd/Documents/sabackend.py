@@ -206,7 +206,7 @@ class SABackend(StorageBackend):
         WHERE keyword.keyword LIKE '" + keyword + "';")
         ids = [row for row in result]
         ids = [row[0] for row in ids]
-        return ids
+        return self.session().query(SADocument).filter(SADocument.file_id.in_(ids)).all()
 
     def get_by_path(self, path: str) -> Document:
         """
