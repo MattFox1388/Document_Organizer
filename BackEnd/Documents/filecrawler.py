@@ -24,7 +24,7 @@ class FileCrawler(ABC):
                 self._parsers[ext] = parser
 
     def register(self, parser: DocumentParser, ext: str):
-        self._parser[ext] = parser
+        self._parsers[ext] = parser
 
     @abstractmethod
     def crawl(self, path: str):
