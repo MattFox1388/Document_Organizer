@@ -200,10 +200,11 @@ class SABackend(StorageBackend):
         return [d.get_file_path for d in documents]
 
     def _get_docs(self, keyword: str):
-        keyword_id = self.session().query(SAKeyword).filter(SAKeyword.keyword == keyword).first().keyword_id
-        instances = self.session().query(SAKeywordInstance).filter(SAKeywordInstance.keyword_id == keyword_id).all()
-        ids = [instance.file_id for instance in instances]
-        return self.session().query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        result = self.db.engine.execute("SELECT file_id \
+        FROM keyword_instance \
+        LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
+        WHERE keyword.keyword LIKE " + keyword + ";")
+        return result
 
     def get_by_path(self, path: str) -> Document:
         """
