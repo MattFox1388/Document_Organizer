@@ -22,9 +22,10 @@ class ParallelFileCrawler(FileCrawler):
         futures = self.do_crawl(path)
         for f in futures:
             while not f.done():
-                time.sleep(2)
+                time.sleep(1)
             doc = f.result()
             if doc is not None:
+                print(doc.get_file_path())
                 print(doc.get_keywords())
                 self._get_backend().store([doc])
 
