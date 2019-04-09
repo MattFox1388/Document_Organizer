@@ -199,7 +199,7 @@ class SABackend(StorageBackend):
         idf = self._get_inverse_document_frequncy(documents)
 
         documents.sort(key=lambda d: StorageBackend._get_relevance(d, keyword, idf))
-        return [d.get_file_path() for d in documents]
+        return documents
 
     def _get_docs(self, keyword: str):
         result = self.db.engine.execute("SELECT file_id \
