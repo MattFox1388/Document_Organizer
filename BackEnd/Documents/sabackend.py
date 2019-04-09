@@ -74,6 +74,8 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
         return self.hash
 
     def get_keywords(self):
+        if not self.safe_keyword_map:
+            self.__init__()
         return dict(self.safe_keyword_map)
 
     def get_parse_date(self) -> datetime:
