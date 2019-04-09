@@ -78,6 +78,12 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
             self.__init__()
         return dict(self.safe_keyword_map)
 
+    def get_occurrences(self, keyword: str) -> int:
+        for k in self.keywords:
+            if k.keyword.keyword == keyword:
+                return k.count
+        return 0
+
     def get_parse_date(self) -> datetime:
         return self.date_parse
 
