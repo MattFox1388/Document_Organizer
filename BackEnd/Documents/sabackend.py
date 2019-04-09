@@ -198,7 +198,7 @@ class SABackend(StorageBackend):
         documents = self._get_docs(keyword)
         idf = self._get_inverse_document_frequncy(documents)
 
-        documents.sort(key=lambda d: StorageBackend._get_relevance(d, keyword, idf))
+        documents.sort(key=lambda d: StorageBackend._get_relevance(d, keyword, idf) * -1)
         return documents
 
     def _get_docs(self, keyword: str):
