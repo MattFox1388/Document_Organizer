@@ -8,7 +8,7 @@ import utc
 class Document(ABC):
 
     def get_term_frequency(self, term: str) -> float:
-        return self.get_occurrences(term) / self.get_total_words()
+        return self.get_occurrences(term) / self.get_num_words()
 
     @abstractmethod
     def get_hash(self) -> str:
