@@ -6,6 +6,6 @@ back = SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', '
 
 query = sys.argv[1]
 
-docs = back._get_docs(query)
+docs = back.get(query)
 for doc in docs:
     print(str(doc.get_file_path()) + ' - ' + str(doc.get_hash()))

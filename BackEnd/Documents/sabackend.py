@@ -188,7 +188,7 @@ class SABackend(StorageBackend):
     def get(self, query_text: str):
         """
         Returns any documents that contain the given keyword.
-        :param keyword: The keyword in question
+        :param query_text: The text to be queried
         :return: Collection of documents
         """
 
