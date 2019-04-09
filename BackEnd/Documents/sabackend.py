@@ -27,7 +27,7 @@ class SAKeywordInstance(base):
     __tablename__ = 'keyword_instance'
 
     keyword_id = Column(Integer, ForeignKey("keyword.keyword_id"), primary_key=True, nullable=False)
-    keyword = relationship(SAKeyword)
+    keyword = relationship(SAKeyword, lazy='joined')
     file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
     count = Column(Integer)
 
@@ -59,7 +59,7 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
     date_edit = Column(TIMESTAMP, nullable=False)
     file_size = Column(Integer, nullable=False)
     num_words = Column(Integer, nullable=False)
-    keywords = relationship("SAKeywordInstance", backref='document', cascade="all, delete-orphan")
+    keywords = relationship("SAKeywordInstance", backref='document', cascade="all, delete-orphan", lazy='selectin')
 
     keyword_map = {}
     safe_keyword_map = None
