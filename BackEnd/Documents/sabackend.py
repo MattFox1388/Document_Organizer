@@ -200,28 +200,19 @@ class SABackend(StorageBackend):
 
         keyword = query_text
         documents = self._get_docs(keyword)
-        print('getting idf')
-        idf = self._get_inverse_document_frequncy(documents)
+        #idf = self._get_inverse_document_frequncy(documents)
 
-        print('Sorting')
-        documents.sort(key=lambda d: StorageBackend._get_relevance(d, keyword, idf) * -1)
-        print('Sorting')
+        #documents.sort(key=lambda d: StorageBackend._get_relevance(d, keyword, idf) * -1)
         return documents
 
     def _get_docs(self, keyword: str):
-        result = self.db.engine.execute("SELECT file_id, count \
+        result = self.db.engine.execute("SELECT file_id \
         FROM keyword_instance \
         LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
-        WHERE keyword.keyword LIKE '" + keyword + "';")
-        rows = [row for row in result]
-        keymap = {}
-        for row in rows:
-            keymap[row[0]] = row[1]
-        docs = self.session().query(SADocument).filter(SADocument.file_id.in_(keymap.keys())).all()
-        for doc in docs:
-            doc.add_keyword(keyword, keymap.get(doc.file_id))
-        print(keymap)
-        return docs
+        WHERE keyword.keyword LIKE '" + keyword + " \
+        ORDERBY tf_idf('" + keyword + "', file_id);")
+        ids = [row[0] for row in result]
+        return self.session().query(SADocument).filter(SADocument.file_id.in_(ids)).all()
 
     def get_by_path(self, path: str) -> Document:
         """
