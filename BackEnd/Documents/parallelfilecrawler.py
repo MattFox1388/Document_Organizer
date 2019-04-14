@@ -19,6 +19,7 @@ class ParallelFileCrawler(FileCrawler):
             return parser.parse(file_path)
         except:
             traceback.print_exc()
+            print('Error parsing: ' + file_path)
             return None
 
     def _submit(self, parser: DocumentParser, file_path: str) -> Future:
@@ -68,6 +69,6 @@ if __name__ == "__main__":
     crawler.register_parser(TextractParser())
     #crawler.register_parser(VideoParser())
 
-    signal.signal(signal.SIGINT, sig_handler)
+    #signal.signal(signal.SIGINT, sig_handler)
 
     crawler.crawl(root)
