@@ -19,12 +19,21 @@ class ParallelFileCrawler(FileCrawler):
     def is_temp_file(path: str) -> bool:
         return '/~$' in path
 
+    def log(self, message: str):
+        print(message)
+        if not message.endswith('\n'):
+            message = message + '\n'
+        self._file_stream.write(message)
+
+    def finish_log(self):
+        self._file_stream.close()
+
     def _parse_file(self, parser: DocumentParser, file_path: str) -> Document:
         try:
             return parser.parse(file_path)
         except:
             traceback.print_exc()
-            print('Error parsing: ' + file_path)
+            self.log('Error parsing: ' + file_path)
             return None
 
     def _submit(self, parser: DocumentParser, file_path: str) -> Future:
@@ -39,6 +48,7 @@ class ParallelFileCrawler(FileCrawler):
             if doc is not None:
                 print('\n' + doc.get_file_path() + '\n' + str(doc.get_keywords()))
                 self._get_backend().store([doc])
+        self.finish_log()
 
     def do_crawl(self, path: str):
         futures = []
@@ -59,9 +69,10 @@ class ParallelFileCrawler(FileCrawler):
     def stop(self):
         self._executor.shutdown(wait=False)
 
-    def __init__(self, workers: int, backend: StorageBackend):
+    def __init__(self, workers: int, backend: StorageBackend, log_file: str):
         super().__init__(backend)
         self._executor = ThreadPoolExecutor(max_workers=workers)
+        self._file_stream = open(log_file, 'w+')
 
 
 def sig_handler(sig, frame):
@@ -70,8 +81,8 @@ def sig_handler(sig, frame):
 if __name__ == "__main__":
     root = '/home/Project/Data'
 
-    crawler = ParallelFileCrawler(4, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org',
-                                               'd3NXWWfyHT', '5432'))
+    _back = SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', '5432')
+    crawler = ParallelFileCrawler(8, _back, '/home/Project/failed')
 
     crawler.register_parser(TextractParser())
     #crawler.register_parser(VideoParser())
