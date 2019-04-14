@@ -214,10 +214,12 @@ class SABackend(StorageBackend):
         keymap = {}
         for row in rows:
             keymap[row[0]] = row[1]
-
+        print('fetching docs')
         docs = self.session().query(SADocument).filter(SADocument.file_id.in_(keymap.keys())).all()
+        print('Fetched')
         for doc in docs:
             doc.add_keyword(keyword, keymap.get(doc.file_id))
+        print('Added keywords')
         return docs
 
     def get_by_path(self, path: str) -> Document:
