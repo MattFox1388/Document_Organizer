@@ -10,7 +10,7 @@ from document import Document, SimpleDocument
 from documentparser import DocumentParser
 
 EXTENSIONS = {'.csv', '.doc', '.docx', '.eml', '.epub', '.json', '.html', '.htm', '.mp3',
-              '.msg', '.odt', '.ogg', '.pdf', '.png', '.pptx', '.ps', '.rtf', '.tiff', '.tif', '.txt', '.wav', 'xlsx',
+              '.msg', '.odt', '.ogg', '.pdf', '.pptx', '.ps', '.rtf', '.tiff', '.tif', '.txt', '.wav', 'xlsx',
               '.xls'}
 
 

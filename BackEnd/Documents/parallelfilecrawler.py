@@ -65,7 +65,7 @@ if __name__ == "__main__":
                                                'd3NXWWfyHT', '5432'))
 
     crawler.register_parser(TextractParser())
-    crawler.register_parser(VideoParser())
+    #crawler.register_parser(VideoParser())
 
     signal.signal(signal.SIGINT, sig_handler)
 
