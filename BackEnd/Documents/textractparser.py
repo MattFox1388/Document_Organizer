@@ -9,7 +9,7 @@ from nltk.tokenize import word_tokenize
 from document import Document, SimpleDocument
 from documentparser import DocumentParser
 
-EXTENSIONS = {'.csv', '.doc', '.docx', '.eml', '.epub', '.gif', '.jpg', '.jpeg', '.json', '.html', '.htm', '.mp3',
+EXTENSIONS = {'.csv', '.doc', '.docx', '.eml', '.epub', '.json', '.html', '.htm', '.mp3',
               '.msg', '.odt', '.ogg', '.pdf', '.png', '.pptx', '.ps', '.rtf', '.tiff', '.tif', '.txt', '.wav', 'xlsx',
               '.xls'}
 
