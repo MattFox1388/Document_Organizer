@@ -59,7 +59,7 @@ def sig_handler(sig, frame):
     crawler.stop()
 
 if __name__ == "__main__":
-    root = '/home/Project/java8doc'
+    root = '/home/Project/Data'
 
     crawler = ParallelFileCrawler(4, SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org',
                                                'd3NXWWfyHT', '5432'))
