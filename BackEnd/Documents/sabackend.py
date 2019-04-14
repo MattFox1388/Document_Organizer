@@ -65,9 +65,6 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
     safe_keyword_map = None
 
     def __init__(self, *args, **kwargs):
-        for keyword in self.keywords:
-            self.keyword_map.update({keyword.get_word(): keyword.get_count()})
-        self.safe_keyword_map = frozendict(self.keyword_map)
         base.__init__(self, *args, **kwargs)
 
     def get_hash(self) -> str:
