@@ -210,7 +210,7 @@ class SABackend(StorageBackend):
         FROM keyword_instance \
         LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
         WHERE keyword.keyword LIKE '" + keyword + "' \
-        ORDERBY tf_idf('" + keyword + "', file_id);")
+        ORDER BY tf_idf('" + keyword + "', file_id);")
         ids = [row[0] for row in result]
         return self.session().query(SADocument).filter(SADocument.file_id.in_(ids)).all()
 
