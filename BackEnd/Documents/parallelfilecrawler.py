@@ -15,7 +15,10 @@ from videoparser import VideoParser
 class ParallelFileCrawler(FileCrawler):
 
     def _parse_file(self, parser: DocumentParser, file_path: str) -> Document:
-        return parser.parse(file_path)
+        try:
+            return parser.parse(file_path)
+        except:
+            return None
 
     def _submit(self, parser: DocumentParser, file_path: str) -> Future:
         return self._executor.submit(self._parse_file, parser, file_path)
