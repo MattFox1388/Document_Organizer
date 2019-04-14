@@ -209,7 +209,7 @@ class SABackend(StorageBackend):
         return documents
 
     def _get_docs(self, keyword: str):
-        result = self.db.engine.execute("SELECT file_id, keyword \
+        result = self.db.engine.execute("SELECT file_id, count \
         FROM keyword_instance \
         LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
         WHERE keyword.keyword LIKE '" + keyword + "';")
