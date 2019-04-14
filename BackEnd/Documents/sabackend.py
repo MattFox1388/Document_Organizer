@@ -59,7 +59,7 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
     date_edit = Column(TIMESTAMP, nullable=False)
     file_size = Column(Integer, nullable=False)
     num_words = Column(Integer, nullable=False)
-    keywords = relationship("SAKeywordInstance", backref='document', cascade="all, delete-orphan")
+    keywords = relationship("SAKeywordInstance", backref='document', cascade="all, delete-orphan", lazy='select')
 
     keyword_map = {}
     safe_keyword_map = None
