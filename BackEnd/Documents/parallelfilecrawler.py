@@ -12,7 +12,12 @@ from storagebackend import StorageBackend
 from textractparser import TextractParser
 from videoparser import VideoParser
 
+
 class ParallelFileCrawler(FileCrawler):
+
+    @staticmethod
+    def is_temp_file(path: str) -> bool:
+        return '/~$' in path
 
     def _parse_file(self, parser: DocumentParser, file_path: str) -> Document:
         try:
@@ -38,6 +43,8 @@ class ParallelFileCrawler(FileCrawler):
     def do_crawl(self, path: str):
         futures = []
         for entry in os.listdir(path):
+            if entry.startswith('~$'):
+                continue
             entry_path = path + "/" + entry
             if os.path.isdir(entry_path):
                 futures.extend(self.do_crawl(entry_path))
