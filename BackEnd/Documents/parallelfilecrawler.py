@@ -1,6 +1,6 @@
 import os
 import signal
-import sys
+import sys, traceback
 import time
 from concurrent.futures import Future, ThreadPoolExecutor
 
@@ -18,6 +18,7 @@ class ParallelFileCrawler(FileCrawler):
         try:
             return parser.parse(file_path)
         except:
+            traceback.print_exc()
             return None
 
     def _submit(self, parser: DocumentParser, file_path: str) -> Future:
