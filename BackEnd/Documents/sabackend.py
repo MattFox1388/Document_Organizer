@@ -59,7 +59,7 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
     date_edit = Column(TIMESTAMP, nullable=False)
     file_size = Column(Integer, nullable=False)
     num_words = Column(Integer, nullable=False)
-    keywords = relationship("SAKeywordInstance", backref='document', cascade="all, delete-orphan", lazy='selectin')
+    keywords = relationship("SAKeywordInstance", backref='document', cascade="all, delete-orphan")
 
     keyword_map = {}
     safe_keyword_map = None
@@ -79,6 +79,9 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
         return dict(self.safe_keyword_map)
 
     def get_occurrences(self, keyword: str) -> int:
+        r = self.keyword_map.get(keyword)
+        if not r:
+            return r
         for k in self.keywords:
             if k.keyword.keyword == keyword:
                 return k.count
@@ -109,8 +112,6 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
         return None
 
     def add_keyword(self, word: str, count: int):
-        if self.occurs(word):
-            self._get_db_keyword(word).set_count(count)
         self.keyword_map[word] = count
 
 
@@ -208,13 +209,19 @@ class SABackend(StorageBackend):
         return documents
 
     def _get_docs(self, keyword: str):
-        result = self.db.engine.execute("SELECT file_id \
+        result = self.db.engine.execute("SELECT file_id, keyword \
         FROM keyword_instance \
         LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
         WHERE keyword.keyword LIKE '" + keyword + "';")
-        ids = [row for row in result]
-        ids = [row[0] for row in ids]
-        return self.session().query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        rows = [row for row in result]
+        keymap = {}
+        for row in rows:
+            keymap[row[0]] = row[1]
+
+        docs = self.session().query(SADocument).filter(SADocument.file_id.in_(keymap.keys())).all()
+        for doc in docs:
+            doc.add_keyword(keyword, keymap.get(doc.file_id))
+        return docs
 
     def get_by_path(self, path: str) -> Document:
         """
