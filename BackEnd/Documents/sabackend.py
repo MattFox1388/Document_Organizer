@@ -200,9 +200,12 @@ class SABackend(StorageBackend):
 
         keyword = query_text
         documents = self._get_docs(keyword)
+        print('getting idf')
         idf = self._get_inverse_document_frequncy(documents)
 
+        print('Sorting')
         documents.sort(key=lambda d: StorageBackend._get_relevance(d, keyword, idf) * -1)
+        print('Sorting')
         return documents
 
     def _get_docs(self, keyword: str):
@@ -214,12 +217,10 @@ class SABackend(StorageBackend):
         keymap = {}
         for row in rows:
             keymap[row[0]] = row[1]
-        print('fetching docs')
         docs = self.session().query(SADocument).filter(SADocument.file_id.in_(keymap.keys())).all()
-        print('Fetched')
         for doc in docs:
             doc.add_keyword(keyword, keymap.get(doc.file_id))
-        print('Added keywords')
+        print(keymap)
         return docs
 
     def get_by_path(self, path: str) -> Document:
