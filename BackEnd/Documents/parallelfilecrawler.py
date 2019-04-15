@@ -1,6 +1,5 @@
 import os
-import signal
-import sys, traceback
+import traceback
 import time
 from concurrent.futures import Future, ThreadPoolExecutor
 
@@ -10,7 +9,6 @@ from documentparser import DocumentParser
 from filecrawler import FileCrawler
 from storagebackend import StorageBackend
 from textractparser import TextractParser
-from videoparser import VideoParser
 
 
 class ParallelFileCrawler(FileCrawler):
@@ -19,8 +17,9 @@ class ParallelFileCrawler(FileCrawler):
     def is_temp_file(path: str) -> bool:
         return '/~$' in path
 
-    def log(self, message: str):
-        print(message)
+    def log(self, message: str, print_std: bool = True):
+        if print_std:
+            print(message)
         if not message.endswith('\n'):
             message = message + '\n'
         self._file_stream.write(message)
@@ -33,7 +32,8 @@ class ParallelFileCrawler(FileCrawler):
             return parser.parse(file_path)
         except:
             traceback.print_exc()
-            self.log('Error parsing: ' + file_path)
+            print('Error parsing: ' + file_path)
+            self.log(file_path, False)
             return None
 
     def _submit(self, parser: DocumentParser, file_path: str) -> Future:
