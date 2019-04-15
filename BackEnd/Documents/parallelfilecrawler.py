@@ -41,7 +41,8 @@ class ParallelFileCrawler(FileCrawler):
 
     def crawl(self, path: str):
         futures = self.do_crawl(path)
-        for f in futures:
+        while futures:
+            f = futures.pop(0)
             while not f.done():
                 time.sleep(1)
             doc = f.result()
