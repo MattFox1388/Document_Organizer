@@ -29,7 +29,9 @@ class ParallelFileCrawler(FileCrawler):
 
     def _parse_file(self, parser: DocumentParser, file_path: str) -> Document:
         try:
-            return parser.parse(file_path)
+            if self._get_backend().get_by_path(file_path) is not None:
+                return parser.parse(file_path)
+            return None
         except:
             traceback.print_exc()
             print('Error parsing: ' + file_path)
@@ -64,8 +66,7 @@ class ParallelFileCrawler(FileCrawler):
                 parser = self._get_parser(ext)
                 if parser is None:
                     continue
-                if self._get_backend().get_by_path(path) is None:
-                    futures.append(self._submit(parser, entry_path))
+                futures.append(self._submit(parser, entry_path))
         return futures
 
     def stop(self):
