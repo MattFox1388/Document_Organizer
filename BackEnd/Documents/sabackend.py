@@ -119,11 +119,11 @@ class SABackend(StorageBackend):
     def __new__(cls, host: str, dbname: str, user: str, password: str, port: str):
         return super(SABackend, cls).__new__(cls)
 
-    def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str, pool_size: int = 20):
         # Open connection
         database = "postgresql+psycopg2://%s:%s@%s:%s/%s" % (
             user, password, host, port, dbname)
-        self.db = create_engine(database)
+        self.db = create_engine(database, pool_size)
         self.session = sessionmaker(self.db)
 
     def close(self):
