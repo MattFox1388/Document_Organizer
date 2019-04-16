@@ -123,7 +123,7 @@ class SABackend(StorageBackend):
         # Open connection
         database = "postgresql+psycopg2://%s:%s@%s:%s/%s" % (
             user, password, host, port, dbname)
-        self.db = create_engine(database, pool_size)
+        self.db = create_engine(database, pool_size=pool_size)
         self.session = sessionmaker(self.db)
 
     def close(self):
