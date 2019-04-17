@@ -62,7 +62,7 @@ class ParallelFileCrawler(FileCrawler):
                 continue
             entry_path = path + "/" + entry
             if os.path.isdir(entry_path):
-                self.do_crawl(entry_path, deque)
+                self.do_crawl(entry_path, line)
             else:
                 ext = os.path.splitext(entry_path)[1]
                 parser = self._get_parser(ext)
