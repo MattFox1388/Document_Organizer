@@ -188,9 +188,8 @@ class SABackend(StorageBackend):
                     session.flush()
             session.commit()
         except:
-            print(str(traceback.format_exc()))
             session.rollback()
-            return False
+            raise
         finally:
             session.close()
         return True
