@@ -29,7 +29,7 @@ class SAKeywordInstance(base):
     keyword = relationship(SAKeyword, lazy='joined')
     file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
     count = Column(Integer)
-    tag = Column(Boolean)
+    tag = Column(Boolean, nullable=False)
 
     def get_document(self):
         return self.document
