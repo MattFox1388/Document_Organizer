@@ -149,7 +149,7 @@ class SABackend(StorageBackend):
                 # Check if all keywords are already in database.  If not, add them.
                 for keyword, count in document.get_keywords().items():
                     kw = SAKeyword(keyword=keyword)
-                    instance = session.query(SAKeyword).filter(SAKeyword.keyword == kw.keyword).first()
+                    instance = session.query(SAKeyword).filter(SAKeyword.keyword == keyword).first()
                     if instance:
                         kw = instance
                     else:
