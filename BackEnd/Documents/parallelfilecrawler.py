@@ -49,7 +49,7 @@ class ParallelFileCrawler(FileCrawler):
                 time.sleep(1)
             doc = f.result()
             if doc is not None:
-                print('\n' + doc.get_file_path() + '\n' + str(doc.get_keywords()))
+                print('Parsed ' + doc.get_file_path())
                 self._get_backend().store([doc])
         self.finish_log()
 

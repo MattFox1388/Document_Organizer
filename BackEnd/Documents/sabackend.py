@@ -189,6 +189,8 @@ class SABackend(StorageBackend):
             print(str(traceback.format_exc()))
             session.rollback()
             return False
+        finally:
+            session.close()
         return True
 
     def get(self, query_text: str):
@@ -212,7 +214,10 @@ class SABackend(StorageBackend):
         WHERE keyword.keyword LIKE '" + keyword + "' \
         ORDER BY tf_idf('" + keyword + "', file_id);")
         ids = [row[0] for row in result]
-        return self.session().query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        session = self.session()
+        r = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        session.close()
+        return  r
 
     def get_by_path(self, path: str) -> Document:
         """
