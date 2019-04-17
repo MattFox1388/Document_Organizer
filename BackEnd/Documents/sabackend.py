@@ -182,7 +182,8 @@ class SABackend(StorageBackend):
                     kws = session.query(SAKeyword).filter(SAKeyword.keyword.in_(document_kws.keys())).all()
                     kws = {kw: document_kws[kw.keyword] for kw in kws}
                     for kw, count in kws.items():
-                        kwi = SAKeywordInstance(keyword_id=kw.keyword_id, file_id=newdoc.file_id, count=count)
+                        kwi = SAKeywordInstance(keyword_id=kw.keyword_id, file_id=newdoc.file_id, count=count
+                                                , tag=False)
                         session.add(kwi)
                     session.flush()
             session.commit()
