@@ -43,7 +43,7 @@ class ParallelFileCrawler(FileCrawler):
         return self._executor.submit(self._parse_file, parser, file_path)
 
     def crawl(self, path: str):
-        futures = self.do_crawl(path)
+        futures = self.do_crawl(path, deque())
         while futures:
             f = futures.popleft()
             if not f.done():
@@ -55,14 +55,13 @@ class ParallelFileCrawler(FileCrawler):
                 self._get_backend().store([doc])
         self.finish_log()
 
-    def do_crawl(self, path: str):
-        futures = deque()
+    def do_crawl(self, path: str, futures: deque[Future]):
         for entry in os.listdir(path):
             if entry.startswith('~$'):
                 continue
             entry_path = path + "/" + entry
             if os.path.isdir(entry_path):
-                futures.append(self.do_crawl(entry_path))
+                self.do_crawl(entry_path, deque)
             else:
                 ext = os.path.splitext(entry_path)[1]
                 parser = self._get_parser(ext)
