@@ -55,7 +55,7 @@ class ParallelFileCrawler(FileCrawler):
                 self._get_backend().store([doc])
         self.finish_log()
 
-    def do_crawl(self, path: str, futures: deque[Future]):
+    def do_crawl(self, path: str, futures):
         for entry in os.listdir(path):
             if entry.startswith('~$'):
                 continue
