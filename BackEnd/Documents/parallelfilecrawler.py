@@ -29,11 +29,8 @@ class ParallelFileCrawler(FileCrawler):
 
     def _parse_file(self, parser: DocumentParser, file_path: str) -> Document:
         try:
-            print('Checking ' + file_path)
             if self._get_backend().get_by_path(file_path) is None:
-                print('Parsing ' + file_path)
                 return parser.parse(file_path)
-            print('Skipping ' + file_path)
             return None
         except:
             traceback.print_exc()

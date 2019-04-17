@@ -184,6 +184,7 @@ class SABackend(StorageBackend):
                     session.flush()
             session.commit()
         except Exception as e:
+            traceback.print_exc()
             session.rollback()
             raise e
         finally:
