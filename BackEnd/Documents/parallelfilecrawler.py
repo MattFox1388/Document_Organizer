@@ -1,6 +1,7 @@
 import os
 import traceback
 import time
+from collections import deque
 from concurrent.futures import Future, ThreadPoolExecutor
 
 from sabackend import SABackend
@@ -44,9 +45,10 @@ class ParallelFileCrawler(FileCrawler):
     def crawl(self, path: str):
         futures = self.do_crawl(path)
         while futures:
-            f = futures.pop(0)
-            while not f.done():
-                time.sleep(1)
+            f = futures.popleft()
+            if not f.done():
+                futures.append(f)
+                continue
             doc = f.result()
             if doc is not None:
                 print('Parsed ' + doc.get_file_path())
@@ -54,13 +56,13 @@ class ParallelFileCrawler(FileCrawler):
         self.finish_log()
 
     def do_crawl(self, path: str):
-        futures = []
+        futures = deque()
         for entry in os.listdir(path):
             if entry.startswith('~$'):
                 continue
             entry_path = path + "/" + entry
             if os.path.isdir(entry_path):
-                futures.extend(self.do_crawl(entry_path))
+                futures.append(self.do_crawl(entry_path))
             else:
                 ext = os.path.splitext(entry_path)[1]
                 parser = self._get_parser(ext)
