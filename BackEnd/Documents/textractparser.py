@@ -23,7 +23,7 @@ class TextractParser(DocumentParser):
         return self._stop
 
     def is_allowed_word(self, word: str) -> bool:
-        return self._get_stop_words() or '\0' in word
+        return word not in self._get_stop_words() and '\0' not in word
 
     """
     Removes text from in front of the extension and then checks
