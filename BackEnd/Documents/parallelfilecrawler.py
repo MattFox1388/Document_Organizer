@@ -43,7 +43,8 @@ class ParallelFileCrawler(FileCrawler):
         return self._executor.submit(self._parse_file, parser, file_path)
 
     def crawl(self, path: str):
-        futures = self.do_crawl(path, deque())
+        futures = deque()
+        self.do_crawl(path, futures)
         while futures:
             f = futures.popleft()
             if not f.done():
@@ -68,7 +69,6 @@ class ParallelFileCrawler(FileCrawler):
                 if parser is None:
                     continue
                 futures.append(self._submit(parser, entry_path))
-        return futures
 
     def stop(self):
         self._executor.shutdown(wait=False)
