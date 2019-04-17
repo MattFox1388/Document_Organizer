@@ -186,8 +186,6 @@ class SABackend(StorageBackend):
         except Exception as e:
             session.rollback()
             raise e
-        finally:
-            session.close()
         return True
 
     def get(self, query_text: str):
@@ -209,7 +207,6 @@ class SABackend(StorageBackend):
         ids = [row[0] for row in result]
         session = self.session()
         r = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
-        session.close()
         return  r
 
     def get_by_path(self, path: str) -> Document:
@@ -223,7 +220,6 @@ class SABackend(StorageBackend):
 
         documents = session.query(SADocument) \
             .filter(SADocument.path == path).all()
-        session.close()
         return documents
 
     # TODO: Implement
