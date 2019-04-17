@@ -148,8 +148,6 @@ class SABackend(StorageBackend):
             for document in docs:
                 # Check if all keywords are already in database.  If not, add them.
                 for keyword, count in document.get_keywords().items():
-                    if '\0' in keyword:
-                        continue
                     kw = SAKeyword(keyword=keyword)
                     instance = session.query(SAKeyword).filter(SAKeyword.keyword == keyword).first()
                     if instance:
@@ -180,8 +178,6 @@ class SABackend(StorageBackend):
                     kws = session.query(SAKeyword).filter(SAKeyword.keyword.in_(document_kws.keys())).all()
                     kws = {kw: document_kws[kw.keyword] for kw in kws}
                     for kw, count in kws.items():
-                        if '\0' in kw:
-                            continue
                         kwi = SAKeywordInstance(keyword_id=kw.keyword_id, file_id=newdoc.file_id, count=count
                                                 , tag=False)
                         session.add(kwi)

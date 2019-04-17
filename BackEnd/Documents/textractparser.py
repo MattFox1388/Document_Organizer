@@ -56,6 +56,9 @@ class TextractParser(DocumentParser):
 
             tokens = [w for w in word_list if not w in self._get_stop_words()]
             word_map = dict(Counter(tokens))
+            for k in word_map.keys():
+                if '\0' in k:
+                    word_map.pop(k, None)
             file_hash = int(self.compute_hash(file_path, 65536), 16)
             create, edit = SimpleDocument.find_create_and_mod(file_path)
             return SimpleDocument(hash_val=file_hash, keywords=word_map, file_path=file_path, parse_date=utc.now(),
