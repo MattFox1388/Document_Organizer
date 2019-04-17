@@ -2,12 +2,11 @@ import datetime
 from abc import ABCMeta
 import traceback
 
-from frozendict import frozendict
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
 from document import Document
 from storagebackend import StorageBackend
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, TIMESTAMP
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, TIMESTAMP, Boolean
 from sqlalchemy.orm import sessionmaker, relationship
 
 base = declarative_base()
@@ -30,6 +29,7 @@ class SAKeywordInstance(base):
     keyword = relationship(SAKeyword, lazy='joined')
     file_id = Column(Integer, ForeignKey("document.file_id"), primary_key=True)
     count = Column(Integer)
+    tag = Column(Boolean)
 
     def get_document(self):
         return self.document
