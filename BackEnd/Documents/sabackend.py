@@ -154,7 +154,6 @@ class SABackend(StorageBackend):
                         kw = instance
                     else:
                         session.add(kw)
-                session.flush()
 
                 # Check to see if the document exists and if the hash matches
                 doc_instance = session.query(SADocument).filter(SADocument.path == document.get_file_path()).first()
@@ -165,7 +164,6 @@ class SABackend(StorageBackend):
                     # If the document already exists, drop it
                     if doc_instance:
                         session.delete(doc_instance)
-                        session.flush()
                     # Create the document and add it to the database
                     newdoc = SADocument(path=document.get_file_path(),
                                         hash=document.get_hash(),
@@ -175,7 +173,6 @@ class SABackend(StorageBackend):
                                         file_size=document.get_file_size(),
                                         num_words=document.get_num_words())
                     session.add(newdoc)
-                    session.flush()
 
                     # Create a new keyword_instance for each keyword
                     document_kws = document.get_keywords()
