@@ -157,7 +157,7 @@ class SABackend(StorageBackend):
 
                 # Check to see if the document exists and if the hash matches
                 doc_instance = session.query(SADocument).filter(SADocument.path == document.get_file_path()).first()
-                if doc_instance and doc_instance.hash == document.get_hash():
+                if doc_instance:
                     print('Found dupe, not storing')
                     continue
                 else:
@@ -184,9 +184,9 @@ class SABackend(StorageBackend):
                         session.add(kwi)
                     session.flush()
             session.commit()
-        except:
+        except Exception as e:
             session.rollback()
-            raise
+            raise e
         finally:
             session.close()
         return True
