@@ -86,8 +86,8 @@ def sig_handler(sig, frame):
 if __name__ == "__main__":
     root = '/home/Project/Data'
 
-    _back = SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', '5432', pool_size=100)
-    crawler = ParallelFileCrawler(8, _back, '/home/Project/failed')
+    _back = SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', '5432', pool_size=200)
+    crawler = ParallelFileCrawler(20, _back, '/home/Project/failed')
 
     crawler.register_parser(TextractParser())
     #crawler.register_parser(VideoParser())
