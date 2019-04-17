@@ -30,7 +30,6 @@ class VideoParser(DocumentParser):
             is_audio_already = True
 
         try:
-            print(temp_audio)
             # convert video to wav format (sr only supports wav and flac)
             if not is_audio_already:
                 VideoParser.convert_video_to_audio(file_path, temp_audio)

@@ -116,14 +116,14 @@ class SABackend(StorageBackend):
     db = None
     session = None
 
-    def __new__(cls, host: str, dbname: str, user: str, password: str, port: str):
+    def __new__(cls, host: str, dbname: str, user: str, password: str, port: str, pool_size: int = 10):
         return super(SABackend, cls).__new__(cls)
 
-    def __init__(self, host: str, dbname: str, user: str, password: str, port: str):
+    def __init__(self, host: str, dbname: str, user: str, password: str, port: str, pool_size: int = 10):
         # Open connection
         database = "postgresql+psycopg2://%s:%s@%s:%s/%s" % (
             user, password, host, port, dbname)
-        self.db = create_engine(database)
+        self.db = create_engine(database, pool_size=pool_size)
         self.session = sessionmaker(self.db)
 
     def close(self):
@@ -189,6 +189,8 @@ class SABackend(StorageBackend):
             print(str(traceback.format_exc()))
             session.rollback()
             return False
+        finally:
+            session.close()
         return True
 
     def get(self, query_text: str):
@@ -212,7 +214,10 @@ class SABackend(StorageBackend):
         WHERE keyword.keyword LIKE '" + keyword + "' \
         ORDER BY tf_idf('" + keyword + "', file_id);")
         ids = [row[0] for row in result]
-        return self.session().query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        session = self.session()
+        r = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        session.close()
+        return  r
 
     def get_by_path(self, path: str) -> Document:
         """
