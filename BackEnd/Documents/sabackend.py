@@ -199,11 +199,7 @@ class SABackend(StorageBackend):
         """
 
         keyword = query_text
-        documents = self._get_docs(keyword)
-        #idf = self._get_inverse_document_frequncy(documents)
-
-        #documents.sort(key=lambda d: StorageBackend._get_relevance(d, keyword, idf) * -1)
-        return documents
+        return self._get_docs(keyword)
 
     def _get_docs(self, keyword: str):
         result = self.db.engine.execute("SELECT file_id \
@@ -228,8 +224,8 @@ class SABackend(StorageBackend):
 
         documents = session.query(SADocument) \
             .filter(SADocument.path == path).all()
+        session.close()
         return documents
-        pass
 
     # TODO: Implement
     def get_duplicates(self):
