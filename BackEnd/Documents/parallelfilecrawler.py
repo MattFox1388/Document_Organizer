@@ -68,6 +68,7 @@ class ParallelFileCrawler(FileCrawler):
                 parser = self._get_parser(ext)
                 if parser is None:
                     continue
+                    print('Appending ' + entry_path)
                 futures.append(self._submit(parser, entry_path))
 
     def stop(self):
