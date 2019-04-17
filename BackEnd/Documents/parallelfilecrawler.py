@@ -29,7 +29,7 @@ class ParallelFileCrawler(FileCrawler):
 
     def _parse_file(self, parser: DocumentParser, file_path: str) -> Document:
         try:
-            print('Chechking ' + file_path)
+            print('Checking ' + file_path)
             if self._get_backend().get_by_path(file_path) is None:
                 print('Parsing ' + file_path)
                 return parser.parse(file_path)

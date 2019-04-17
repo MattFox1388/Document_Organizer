@@ -221,10 +221,10 @@ class SABackend(StorageBackend):
         """
         session = self.session()
 
-        documents = session.query(SADocument) \
-            .filter(SADocument.path == path).all()
+        doc = session.query(SADocument) \
+            .filter(SADocument.path == path).first()
         session.close()
-        return documents
+        return doc
 
     # TODO: Implement
     def get_duplicates(self):
