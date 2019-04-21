@@ -87,7 +87,7 @@ if __name__ == "__main__":
     root = '/home/Project/Data'
 
     _back = SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', 'd3NXWWfyHT', '5432', pool_size=300)
-    crawler = ParallelFileCrawler(40, _back, '/home/Project/failed')
+    crawler = ParallelFileCrawler(8, _back, '/home/Project/failed')
 
     crawler.register_parser(TextractParser())
     #crawler.register_parser(VideoParser())
