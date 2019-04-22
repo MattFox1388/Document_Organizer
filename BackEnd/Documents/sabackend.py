@@ -1,6 +1,7 @@
 import datetime
 from abc import ABCMeta
 import traceback
+from typing import Collection
 
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
@@ -201,18 +202,6 @@ class SABackend(StorageBackend):
         keyword = query_text
         return self._get_docs(keyword)
 
-    def _get_docs_old(self, keyword: str):
-        result = self.db.engine.execute("SELECT file_id \
-        FROM keyword_instance \
-        LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
-        WHERE keyword.keyword LIKE '" + keyword + "' \
-        ORDER BY tf_idf('" + keyword + "', file_id);")
-        ids = [row[0] for row in result]
-        session = self.session()
-        r = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
-        session.close()
-        return  r
-
     def _get_docs(self, keyword: str):
         result = self.db.engine.execute("SELECT document.file_id, (cast(keyword_instance.count as decimal)/document.num_words) as tf \
             FROM keyword_instance \
@@ -221,13 +210,21 @@ class SABackend(StorageBackend):
             WHERE keyword.keyword LIKE '" + keyword + "' \
             ORDER BY tf DESC;")
         ids = [row[0] for row in result]
-        session = self.session()
-        r = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
-        session.close()
-        return r
+        docs = self._get_docs_by_id(ids)
+        return self._sort_by_id(ids, docs)
 
-    def _get_docs_cosine(self, query: str):
-        basis = set(query.split(' '))
+    def _get_docs_by_id(self, ids: Collection[str]):
+        session = self.session()
+        q = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        session.close()
+        return q
+
+    def _sort_by_id(self, ids, docs):
+        doc_map = dict()
+        for doc in docs:
+            doc_map[doc.file_id] = doc
+        r = [doc_map.get(_id) for _id in ids]
+        return r
 
     def get_by_path(self, path: str) -> Document:
         """
