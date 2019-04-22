@@ -33,7 +33,7 @@ class ParallelFileCrawler(FileCrawler):
             if self._get_backend().get_by_path(file_path) is None:
                 return parser.parse(file_path)
             return None
-        except:
+        except Exception as e:
             traceback.print_exc()
             print('Error parsing: ' + file_path)
             self.log(file_path, False)

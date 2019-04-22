@@ -201,7 +201,7 @@ class SABackend(StorageBackend):
         keyword = query_text
         return self._get_docs(keyword)
 
-    def _get_docs(self, keyword: str):
+    def _get_docs_old(self, keyword: str):
         result = self.db.engine.execute("SELECT file_id \
         FROM keyword_instance \
         LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
@@ -212,6 +212,22 @@ class SABackend(StorageBackend):
         r = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
         session.close()
         return  r
+
+    def _get_docs(self, keyword: str):
+        result = self.db.engine.execute("SELECT document.file_id, (cast(keyword_instance.count as decimal)/document.num_words) as tf \
+            FROM keyword_instance \
+            LEFT JOIN document on keyword_instance.file_id = document.file_id \
+            LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
+            WHERE keyword.keyword LIKE '" + keyword + "' \
+            ORDER BY tf DESC;")
+        ids = [row[0] for row in result]
+        session = self.session()
+        r = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        session.close()
+        return r
+
+    def _get_docs_cosine(self, query: str):
+        basis = set(query.split(' '))
 
     def get_by_path(self, path: str) -> Document:
         """
