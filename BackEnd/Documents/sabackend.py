@@ -213,7 +213,7 @@ class SABackend(StorageBackend):
         docs = self._get_docs_by_id(ids)
         return self._sort_by_id(ids, docs)
 
-    def _get_docs_by_id(self, ids: Collection[str]):
+    def _get_docs_by_id(self, ids):
         session = self.session()
         q = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
         session.close()
