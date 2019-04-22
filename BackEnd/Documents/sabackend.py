@@ -1,7 +1,6 @@
 import datetime
 from abc import ABCMeta
 import traceback
-from typing import Collection
 
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
