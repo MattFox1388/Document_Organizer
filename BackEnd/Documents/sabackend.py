@@ -197,17 +197,10 @@ class SABackend(StorageBackend):
         :param query_text: The text to be queried
         :return: Collection of documents
         """
+        return self._get_docs(query_text)
 
-        keyword = query_text
-        return self._get_docs(keyword)
-
-    def _get_docs(self, keyword: str):
-        result = self.db.engine.execute("SELECT document.file_id, (cast(keyword_instance.count as decimal)/document.num_words) as tf \
-            FROM keyword_instance \
-            LEFT JOIN document on keyword_instance.file_id = document.file_id \
-            LEFT JOIN keyword on keyword.keyword_id = keyword_instance.keyword_id \
-            WHERE keyword.keyword LIKE '" + keyword + "' \
-            ORDER BY tf DESC;")
+    def _get_docs(self, query: str):
+        result = self.db.engine.execute("SELECT * FROM query('%s')"%query)
         ids = [row[0] for row in result]
         docs = self._get_docs_by_id(ids)
         return self._sort_by_id(ids, docs)
