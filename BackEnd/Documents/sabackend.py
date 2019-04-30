@@ -205,6 +205,13 @@ class SABackend(StorageBackend):
         docs = self.get_docs_by_id(ids)
         return self._sort_by_id(ids, docs)
 
+    def get_doc_by_id(self, id):
+        session = self.session()
+        doc = session.query(SADocument).filter(SADocument.file_id == id).all()
+        doc.tags = self.get_tags(doc)
+        session.close()
+        return doc
+
     def get_docs_by_id(self, ids):
         session = self.session()
         q = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
@@ -229,6 +236,7 @@ class SABackend(StorageBackend):
 
         doc = session.query(SADocument) \
             .filter(SADocument.path == path).first()
+        doc.tags = self.get_tags(doc)
         session.close()
         return doc
 
@@ -254,7 +262,7 @@ class SABackend(StorageBackend):
 
         documents = session.query(SADocument) \
             .filter(SADocument.hash == doc.get_hash()) \
-            .filter(SADocument.path != doc.get_file_path()).filter(SAdocument.file_size != doc.get_file_size())
+            .filter(SADocument.path != doc.get_file_path()).filter(SADocument.file_size != doc.get_file_size())
         return documents
 
     def remove(self, doc: Document) -> bool:

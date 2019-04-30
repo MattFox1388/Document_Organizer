@@ -46,6 +46,13 @@ class Document(ABC):
         return self.get_occurrences(keyword) > 0
 
     @abstractmethod
+    def get_tags(self):
+        pass
+
+    def has_tag(self, tag: str) -> bool:
+        return tag in self.get_tags()
+
+    @abstractmethod
     def get_parse_date(self) -> datetime:
         """
         Returns the time when this document was parsed last.
@@ -139,6 +146,9 @@ class SimpleDocument(Document):
 
     def get_num_words(self):
         return self._num_words
+
+    def get_tags(self):
+        return {}
 
     '''This method uses ctime to find creation time (Windows), or last metadata change (Unix). 
        Second datetime in tuple will be the last modified datetime'''
