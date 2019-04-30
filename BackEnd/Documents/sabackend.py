@@ -280,7 +280,7 @@ class SABackend(StorageBackend):
         if type(document) == SADocument:
             document = document.file_id
         keywords = []
-        for keyword_instance in session.query(SAKeywordInstance).filter(SAKeywordInstance.file_id == document).filter(SAKeywordInstance.tag == True).all():
+        for keyword_instance in session.query(SAKeywordInstance).filter(SAKeywordInstance.file_id == document).filter(SAKeywordInstance.tag is True).all():
             keywords.append(keyword_instance.keyword.keyword)
         return keywords
 
@@ -301,7 +301,7 @@ class SABackend(StorageBackend):
             return False  # No such document exists
 
         keyword_instance = session.query(SAKeywordInstance)\
-            .filter(SAKeywordInstance.tag == True)\
+            .filter(SAKeywordInstance.tag is True)\
             .filter(SAKeywordInstance.file_id == document)\
             .filter(SAKeywordInstance.keyword.keyword == tag).all()
         if len(keyword_instance):
@@ -325,7 +325,7 @@ class SABackend(StorageBackend):
         Removes tag from given document.
         :param document: SADocument or document_id that you want to remove tags from.
         :param tag:
-        :return: True if tag removed succesfully; False if tag does not exist or document does not exist.
+        :return: True if tag removed successfully; False if tag does not exist or document does not exist.
         """
         session = self.session()
         if type(document) != SADocument or type(document) != int:
@@ -337,7 +337,7 @@ class SABackend(StorageBackend):
             return False  # No such document exists
 
         keyword_instance = session.query(SAKeywordInstance) \
-            .filter(SAKeywordInstance.tag == True) \
+            .filter(SAKeywordInstance.tag is True) \
             .filter(SAKeywordInstance.file_id == document) \
             .filter(SAKeywordInstance.keyword.keyword == tag).all()
         if len(keyword_instance):
