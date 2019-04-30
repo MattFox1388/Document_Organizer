@@ -271,15 +271,24 @@ class SABackend(StorageBackend):
     def get_tags(self, document):
         """
         Returns all tags for the given document.
-        :param document: Document or document_id that you want the tags for
+        :param document: SADocument or document_id that you want the tags for
         :return: List of strings
         """
-        pass
+        session = self.session()
+        if type(document) != SADocument or type(document) != int:
+            return False
+        if type(document) == SADocument:
+            document = document.file_id
+        keywords = []
+        for keyword_instance in session.query(SAKeywordInstance).filter(SAKeywordInstance.file_id == document).filter(SAKeywordInstance.tag == True).all():
+            keywords.append(keyword_instance.keyword.keyword)
+        return keywords
+
 
     def add_tag(self, document, tag):
         """
         Adds tag to given document.
-        :param document: Document or document_id that you want to add tag to .
+        :param document: SADocument or document_id that you want to add tag to .
         :param tag: Tag to be added
         :return: True if tag added successfully; False if tag already exists or document does not exist
         """
@@ -288,7 +297,7 @@ class SABackend(StorageBackend):
     def remove_tag(self, document, tag):
         """
         Removes tag from given document.
-        :param document: Document or document_id that you want to remove tags from.
+        :param document: SADocument or document_id that you want to remove tags from.
         :param tag:
         :return: True if tag removed succesfully; False if tag does not exist or document does not exist.
         """
