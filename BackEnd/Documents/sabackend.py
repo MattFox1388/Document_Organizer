@@ -284,7 +284,6 @@ class SABackend(StorageBackend):
             keywords.append(keyword_instance.keyword.keyword)
         return keywords
 
-
     def add_tag(self, document, tag):
         """
         Adds tag to given document.
@@ -292,7 +291,34 @@ class SABackend(StorageBackend):
         :param tag: Tag to be added
         :return: True if tag added successfully; False if tag already exists or document does not exist
         """
-        pass
+        session = self.session()
+        if type(document) != SADocument or type(document) != int:
+            return False  # Invalid parameter received
+        if type(document) == SADocument:
+            document = document.file_id
+        document_rec = session.query(SADocument).filter(SADocument.file_id == document)
+        if len(document_rec) != 1:
+            return False  # No such document exists
+
+        keyword_instance = session.query(SAKeywordInstance)\
+            .filter(SAKeywordInstance.tag == True)\
+            .filter(SAKeywordInstance.file_id == document)\
+            .filter(SAKeywordInstance.keyword.keyword == tag).all()
+        if len(keyword_instance):
+            return False  # Tag already exists
+
+        # Check if tag already exists in database.  If it doesn't, add it.
+        kw = SAKeyword(keyword=tag)
+        kw_rec = session.query(SAKeyword).filter(SAKeyword.keyword == tag).first()
+        if kw_rec:
+            kw = kw_rec
+        else:
+            session.add(kw)
+
+        # Add keyword instance record.
+        keyword_instance = SAKeywordInstance(file_id=document, keyword_id = kw.keyword_id, tag=True, count=1)
+        session.add(keyword_instance)
+        return True
 
     def remove_tag(self, document, tag):
         """
