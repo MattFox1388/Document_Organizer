@@ -202,10 +202,10 @@ class SABackend(StorageBackend):
     def _get_docs(self, query: str):
         result = self.db.engine.execute("SELECT * FROM query('%s')"%query)
         ids = [row[0] for row in result]
-        docs = self._get_docs_by_id(ids)
+        docs = self.get_docs_by_id(ids)
         return self._sort_by_id(ids, docs)
 
-    def _get_docs_by_id(self, ids):
+    def get_docs_by_id(self, ids):
         session = self.session()
         q = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
         session.close()
