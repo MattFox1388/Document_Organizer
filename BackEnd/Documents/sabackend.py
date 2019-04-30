@@ -267,3 +267,30 @@ class SABackend(StorageBackend):
             session.rollback()
             return False
         return True
+
+    def get_tags(self, document):
+        """
+        Returns all tags for the given document.
+        :param document: Document or document_id that you want the tags for
+        :return: List of strings
+        """
+        pass
+
+    def add_tag(self, document, tag):
+        """
+        Adds tag to given document.
+        :param document: Document or document_id that you want to add tag to .
+        :param tag: Tag to be added
+        :return: True if tag added successfully; False if tag already exists or document does not exist
+        """
+        pass
+
+    def remove_tag(self, document, tag):
+        """
+        Removes tag from given document.
+        :param document: Document or document_id that you want to remove tags from.
+        :param tag:
+        :return: True if tag removed succesfully; False if tag does not exist or document does not exist.
+        """
+        pass
+
