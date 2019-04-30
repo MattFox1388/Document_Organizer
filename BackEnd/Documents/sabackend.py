@@ -275,7 +275,7 @@ class SABackend(StorageBackend):
         :return: List of strings
         """
         session = self.session()
-        if type(document) != SADocument or type(document) != int:
+        if type(document) != SADocument and type(document) != int:
             return False
         if type(document) == SADocument:
             document = document.file_id
@@ -292,33 +292,40 @@ class SABackend(StorageBackend):
         :return: True if tag added successfully; False if tag already exists or document does not exist
         """
         session = self.session()
-        if type(document) != SADocument or type(document) != int:
+        if type(document) != SADocument and type(document) != int:
             return False  # Invalid parameter received
         if type(document) == SADocument:
             document = document.file_id
-        document_rec = session.query(SADocument).filter(SADocument.file_id == document)
+        document_rec = session.query(SADocument).filter(SADocument.file_id == document).all()
         if len(document_rec) != 1:
             return False  # No such document exists
 
-        keyword_instance = session.query(SAKeywordInstance)\
-            .filter(SAKeywordInstance.tag is True)\
-            .filter(SAKeywordInstance.file_id == document)\
-            .filter(SAKeywordInstance.keyword.keyword == tag).all()
-        if len(keyword_instance):
-            return False  # Tag already exists
-
-        # Check if tag already exists in database.  If it doesn't, add it.
+        # Check if keyword already exists in database.  If it doesn't, add it.
         kw = SAKeyword(keyword=tag)
         kw_rec = session.query(SAKeyword).filter(SAKeyword.keyword == tag).first()
         if kw_rec:
             kw = kw_rec
         else:
             session.add(kw)
+            session.commit()
+
+        # Check if tag already exists in database.
+        keyword_instance = session.query(SAKeywordInstance)\
+            .filter(SAKeywordInstance.tag is True)\
+            .filter(SAKeywordInstance.file_id == document)\
+            .filter(SAKeywordInstance.keyword_id == kw.keyword_id).all()
+        if len(keyword_instance):
+            return False  # Tag already exists
 
         # Add keyword instance record.
-        keyword_instance = SAKeywordInstance(file_id=document, keyword_id = kw.keyword_id, tag=True, count=1)
+        keyword_instance = SAKeywordInstance(file_id=document, keyword_id=kw.keyword_id, tag=True, count=1)
         session.add(keyword_instance)
-        return True
+        try:
+            session.commit()
+            return True
+        except:
+            session.rollback()
+        return False
 
     def remove_tag(self, document, tag):
         """
@@ -328,7 +335,7 @@ class SABackend(StorageBackend):
         :return: True if tag removed successfully; False if tag does not exist or document does not exist.
         """
         session = self.session()
-        if type(document) != SADocument or type(document) != int:
+        if type(document) != SADocument and type(document) != int:
             return False  # Invalid parameter received
         if type(document) == SADocument:
             document = document.file_id
@@ -336,10 +343,17 @@ class SABackend(StorageBackend):
         if len(document_rec) != 1:
             return False  # No such document exists
 
+        kw = SAKeyword(keyword=tag)
+        kw_rec = session.query(SAKeyword).filter(SAKeyword.keyword == tag).first()
+        if kw_rec:
+            kw = kw_rec
+        else:
+            return False # Can't remove a keyword that doesn't exist!
+
         keyword_instance = session.query(SAKeywordInstance) \
             .filter(SAKeywordInstance.tag is True) \
             .filter(SAKeywordInstance.file_id == document) \
-            .filter(SAKeywordInstance.keyword.keyword == tag).all()
+            .filter(SAKeywordInstance.keyword_id == kw.keyword_id).all()
         if len(keyword_instance):
             session.delete(keyword_instance)
         else:
