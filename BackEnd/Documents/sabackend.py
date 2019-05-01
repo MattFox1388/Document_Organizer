@@ -240,7 +240,6 @@ class SABackend(StorageBackend):
 
         doc = session.query(SADocument) \
             .filter(SADocument.path == path).first()
-        doc.tags = self.get_tags(doc)
         session.close()
         return doc
 
