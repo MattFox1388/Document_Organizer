@@ -348,29 +348,29 @@ class SABackend(StorageBackend):
         :param tag:
         :return: True if tag removed successfully; False if tag does not exist or document does not exist.
         """
-        tag = tag.lower()
         session = self.session()
         if type(document) != SADocument and type(document) != int:
             return False  # Invalid parameter received
         if type(document) == SADocument:
             document = document.file_id
-        document_rec = session.query(SADocument).filter(SADocument.file_id == document)
+        document_rec = session.query(SADocument).filter(SADocument.file_id == document).all()
         if len(document_rec) != 1:
             return False  # No such document exists
 
-        kw = SAKeyword(keyword=tag)
         kw_rec = session.query(SAKeyword).filter(SAKeyword.keyword == tag).first()
         if kw_rec:
             kw = kw_rec
         else:
             return False # Can't remove a keyword that doesn't exist!
 
-        keyword_instance = session.query(SAKeywordInstance) \
-            .filter(SAKeywordInstance.tag is True) \
+        keyword_instances = session.query(SAKeywordInstance) \
+            .filter(SAKeywordInstance.tag.is_(True)) \
             .filter(SAKeywordInstance.file_id == document) \
             .filter(SAKeywordInstance.keyword_id == kw.keyword_id).all()
-        if len(keyword_instance):
-            session.delete(keyword_instance)
+        if len(keyword_instances):
+            for keyword_instance in keyword_instances:
+                session.delete(keyword_instance)
+            session.commit()
         else:
             return False
         return True
