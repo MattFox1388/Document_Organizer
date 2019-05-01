@@ -111,6 +111,10 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
     def add_keyword(self, word: str, count: int):
         self.keyword_map[word] = count
 
+    # TODO: Implement
+    def get_tags(self):
+        return False
+
 
 class SABackend(StorageBackend):
     db = None
@@ -287,9 +291,10 @@ class SABackend(StorageBackend):
             return False
         if type(document) == SADocument:
             document = document.file_id
-        keywords = []
-        for keyword_instance in session.query(SAKeywordInstance).filter(SAKeywordInstance.file_id == document).filter(SAKeywordInstance.tag is True).all():
-            keywords.append(keyword_instance.keyword.keyword)
+        keyword_instances = session.query(SAKeywordInstance).filter(SAKeywordInstance.file_id == document)\
+                .filter(SAKeywordInstance.tag.is_(True)).all()
+        kws = session.query(SAKeyword).filter(SAKeyword.keyword_id.in_([kw_instance.keyword_id for kw_instance in keyword_instances]))
+        keywords = [kw.keyword for kw in kws]
         return keywords
 
     def add_tag(self, document, tag):
@@ -299,6 +304,7 @@ class SABackend(StorageBackend):
         :param tag: Tag to be added
         :return: True if tag added successfully; False if tag already exists or document does not exist
         """
+        tag = tag.lower()
         session = self.session()
         if type(document) != SADocument and type(document) != int:
             return False  # Invalid parameter received
@@ -342,6 +348,7 @@ class SABackend(StorageBackend):
         :param tag:
         :return: True if tag removed successfully; False if tag does not exist or document does not exist.
         """
+        tag = tag.lower()
         session = self.session()
         if type(document) != SADocument and type(document) != int:
             return False  # Invalid parameter received
@@ -367,3 +374,15 @@ class SABackend(StorageBackend):
         else:
             return False
         return True
+
+    def get_documents_by_tag(self, tag):
+        tag = tag.lower()
+        session = self.session()
+        kw_rec = session.query(SAKeyword).filter(SAKeyword.keyword == tag).first()
+        if not kw_rec:
+            return []
+        keyword_instances = session.query(SAKeywordInstance).filter(SAKeywordInstance.tag.is_(True))\
+            .filter(SAKeywordInstance.keyword_id == kw_rec.keyword_id).all()
+        doc_ids = [kw_instance.file_id for kw_instance in keyword_instances]
+        doc_recs = session.query(SADocument).filter(SADocument.file_id.in_(doc_ids)).all()
+        return doc_recs
