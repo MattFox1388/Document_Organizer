@@ -112,9 +112,8 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
     def add_keyword(self, word: str, count: int):
         self.keyword_map[word] = count
 
-    # TODO: Implement
     def get_tags(self):
-        return False
+        return self.tags
 
 
 class SABackend(StorageBackend):
