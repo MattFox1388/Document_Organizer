@@ -348,6 +348,7 @@ class SABackend(StorageBackend):
         :param tag:
         :return: True if tag removed successfully; False if tag does not exist or document does not exist.
         """
+        tag = tag.lower()
         session = self.session()
         if type(document) != SADocument and type(document) != int:
             return False  # Invalid parameter received

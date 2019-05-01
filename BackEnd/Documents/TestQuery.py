@@ -7,7 +7,7 @@ print("Connected to server")
 
 
 # print(back.add_tag(100000, "Test"))
-print(back.remove_tag(100000, "Test"))
+print(back.remove_tag(100000, "Test_Tag"))
 # query = ' '.join(sys.argv[1:])
 # print("Searching for \'%s\'\n" % query)
 #
