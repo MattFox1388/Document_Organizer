@@ -63,6 +63,7 @@ class SADocument(Document, base, metaclass=ABCBaseMeta):
 
     keyword_map = {}
     safe_keyword_map = None
+    tags = {}
 
     def __init__(self, *args, **kwargs):
         base.__init__(self, *args, **kwargs)
@@ -211,7 +212,7 @@ class SABackend(StorageBackend):
 
     def get_doc_by_id(self, id):
         session = self.session()
-        doc = session.query(SADocument).filter(SADocument.file_id == id).all()
+        doc = session.query(SADocument).filter(SADocument.file_id == id).one()
         doc.tags = self.get_tags(doc)
         session.close()
         return doc
