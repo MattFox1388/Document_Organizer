@@ -265,7 +265,7 @@ class SABackend(StorageBackend):
 
         documents = session.query(SADocument) \
             .filter(SADocument.hash == doc.get_hash()) \
-            .filter(SADocument.path != doc.get_file_path()).filter(SADocument.file_size != doc.get_file_size())
+            .filter(SADocument.path != doc.get_file_path()).filter(SADocument.file_size == doc.get_file_size()).all()
         return documents
 
     def remove(self, doc: Document) -> bool:
@@ -335,6 +335,7 @@ class SABackend(StorageBackend):
         session.add(keyword_instance)
         try:
             session.commit()
+            doc.tags.add(tag)
             return True
         except:
             session.rollback()
@@ -347,6 +348,7 @@ class SABackend(StorageBackend):
         :param tag:
         :return: True if tag removed successfully; False if tag does not exist or document does not exist.
         """
+        doc = document
         tag = tag.lower()
         session = self.session()
         if type(document) != SADocument and type(document) != int:
@@ -373,6 +375,7 @@ class SABackend(StorageBackend):
             session.commit()
         else:
             return False
+        doc.tags.remove(tag)
         return True
 
     def get_documents_by_tag(self, tag):
