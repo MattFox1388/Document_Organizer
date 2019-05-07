@@ -219,6 +219,8 @@ class SABackend(StorageBackend):
     def get_docs_by_id(self, ids):
         session = self.session()
         q = session.query(SADocument).filter(SADocument.file_id.in_(ids)).all()
+        for doc in q:
+            doc.tags = self.get_tags(doc)
         session.close()
         return q
 
@@ -324,7 +326,7 @@ class SABackend(StorageBackend):
 
         # Check if tag already exists in database.
         keyword_instance = session.query(SAKeywordInstance)\
-            .filter(SAKeywordInstance.tag is True)\
+            .filter(SAKeywordInstance.tag.is_(True))\
             .filter(SAKeywordInstance.file_id == document)\
             .filter(SAKeywordInstance.keyword_id == kw.keyword_id).all()
         if len(keyword_instance):
@@ -335,10 +337,11 @@ class SABackend(StorageBackend):
         session.add(keyword_instance)
         try:
             session.commit()
-            doc.tags.add(tag)
+            document_rec.tags.add(tag)
             return True
-        except:
+        except Exception as e:
             session.rollback()
+            raise e
         return False
 
     def remove_tag(self, document, tag):
@@ -388,4 +391,6 @@ class SABackend(StorageBackend):
             .filter(SAKeywordInstance.keyword_id == kw_rec.keyword_id).all()
         doc_ids = [kw_instance.file_id for kw_instance in keyword_instances]
         doc_recs = session.query(SADocument).filter(SADocument.file_id.in_(doc_ids)).all()
+        for doc in doc_recs:
+            doc.tags = self.get_tags(doc)
         return doc_recs

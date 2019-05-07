@@ -6,8 +6,10 @@ back = SABackend('ceas-e384d-dev1.cs.uwm.edu', 'documentorganizer', 'doc_org', '
 print("Connected to server")
 
 
-# print(back.add_tag(100000, "Test"))
-print(back.get_doc_by_id(59038))
+
+# document = back.get_doc_by_id(55389)
+print(back.add_tag(100000, "Test"))
+# print(back.get_duplicates_of(document))
 # query = ' '.join(sys.argv[1:])
 # print("Searching for \'%s\'\n" % query)
 #
